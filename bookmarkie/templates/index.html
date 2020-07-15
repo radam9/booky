@@ -1,26 +1,235 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+      integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk"
+      crossorigin="anonymous"
+    />
+    <!-- google font -->
+    <link
+      href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800,900"
+      rel="stylesheet"
+    />
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
-        integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
-    <title>Booky - Your Bookmark Manager !</title>
-</head>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <!-- stylesheets -->
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styles/sidebar.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styles/content.css') }}"
+    />
+    <!-- favicon -->
+    <link
+      rel="shortcut icon"
+      href="{{ url_for('static', filename='favicon.ico') }}"
+    />
+    <title>Bookmarkie - Your Bookmark Manager !</title>
+  </head>
 
-<body>
-    <h1>Booky!!!</h1>
-
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
-        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
-        crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
-        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
-        crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
-        integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
-        crossorigin="anonymous"></script>
-</body>
-
+  <body>
+    <div class="wrapper d-flex align-items-stretch">
+      <nav id="sidebar">
+        <div class="custom-menu">
+          <button type="button" id="sidebarCollapse" class="btn btn-secondary">
+            <i class="fa fa-bars"></i>
+            <span class="sr-only">Toggle Menu</span>
+          </button>
+        </div>
+        <div class="category-wrapper">
+          <h1><a href="#" class="logo">Categories</a></h1>
+          <ul class="list-unstyled components mb-5">
+            <li class="active"><a href="#">Homepage</a></li>
+            <li><a href="#">Dashboard</a></li>
+            <li><a href="#">Friends</a></li>
+            <li><a href="#">Subcription</a></li>
+            <li><a href="#">Settings</a></li>
+            <li><a href="#">Information</a></li>
+          </ul>
+        </div>
+      </nav>
+      <!-- Page Content  -->
+      <div id="content" class="p-4 p-md-5 pt-5">
+        <h2 class="mb-4 category"># Category Name!</h2>
+        <div class="category-container">
+          <div class="folder">
+            <div class="folder-title">
+              <h4 class="title">Folder Name</h4>
+            </div>
+            <div class="folder-subfolder">
+              <h5 class="subfolder">SubFolder Name</h5>
+            </div>
+            <div class="folder-links">
+              <ul class="links unstyled-list">
+                <li class="link">
+                  <div class="link-div">
+                    <img
+                      class="favicon"
+                      src="https://www.google.com/s2/favicons?domain=www.google.com"
+                      alt=""
+                    />
+                    <a class="hyperlink" href="https://www.google.com">
+                      Link 1</a
+                    >
+                  </div>
+                </li>
+                <li class="link">
+                  <div class="link-div">
+                    <img
+                      class="favicon"
+                      src="https://www.google.com/s2/favicons?domain=www.google.com"
+                      alt=""
+                    />
+                    <a class="hyperlink" href="https://www.google.com">
+                      Link 2</a
+                    >
+                  </div>
+                </li>
+                <li class="link">
+                  <div class="link-div">
+                    <img
+                      class="favicon"
+                      src="https://www.google.com/s2/favicons?domain=www.google.com"
+                      alt=""
+                    />
+                    <a class="hyperlink" href="https://www.google.com">
+                      Link 3</a
+                    >
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="category-container">
+          <div class="folder">
+            <div class="folder-title">
+              <h4 class="title">Folder Name</h4>
+            </div>
+            <div class="folder-subfolder">
+              <h5 class="subfolder">SubFolder Name</h5>
+            </div>
+            <div class="folder-links">
+              <ul class="links unstyled-list">
+                <li class="link">
+                  <div class="link-div">
+                    <img
+                      class="favicon"
+                      src="https://www.google.com/s2/favicons?domain=www.google.com"
+                      alt=""
+                    />
+                    <a class="hyperlink" href="https://www.google.com">
+                      Link 1</a
+                    >
+                  </div>
+                </li>
+                <li class="link">
+                  <div class="link-div">
+                    <img
+                      class="favicon"
+                      src="https://www.google.com/s2/favicons?domain=www.google.com"
+                      alt=""
+                    />
+                    <a class="hyperlink" href="https://www.google.com">
+                      Link 2</a
+                    >
+                  </div>
+                </li>
+                <li class="link">
+                  <div class="link-div">
+                    <img
+                      class="favicon"
+                      src="https://www.google.com/s2/favicons?domain=www.google.com"
+                      alt=""
+                    />
+                    <a class="hyperlink" href="https://www.google.com">
+                      Link 3</a
+                    >
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="category-container">
+          <div class="folder">
+            <div class="folder-title">
+              <h4 class="title">Folder Name</h4>
+            </div>
+            <div class="folder-subfolder">
+              <h5 class="subfolder">SubFolder Name</h5>
+            </div>
+            <div class="folder-links">
+              <ul class="links unstyled-list">
+                <li class="link">
+                  <div class="link-div">
+                    <img
+                      class="favicon"
+                      src="https://www.google.com/s2/favicons?domain=www.google.com"
+                      alt=""
+                    />
+                    <a class="hyperlink" href="https://www.google.com">
+                      Link 1</a
+                    >
+                  </div>
+                </li>
+                <li class="link">
+                  <div class="link-div">
+                    <img
+                      class="favicon"
+                      src="https://www.google.com/s2/favicons?domain=www.google.com"
+                      alt=""
+                    />
+                    <a class="hyperlink" href="https://www.google.com">
+                      Link 2</a
+                    >
+                  </div>
+                </li>
+                <li class="link">
+                  <div class="link-div">
+                    <img
+                      class="favicon"
+                      src="https://www.google.com/s2/favicons?domain=www.google.com"
+                      alt=""
+                    />
+                    <a class="hyperlink" href="https://www.google.com">
+                      Link 3</a
+                    >
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script
+      src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+      integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+      integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
+      integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      type="text/javascript"
+      src="{{ url_for('static', filename='scripts/sidebar.js') }}"
+    ></script>
+  </body>
 </html>

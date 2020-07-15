@@ -1,0 +1,63 @@
+body {
+  background-color: #282c34;
+}
+
+.category-container {
+  display: block;
+  width: 450px;
+}
+
+.folder {
+  margin: 20px;
+  width: 400px;
+  background-color: #abb2bf;
+  border-radius: 4px;
+}
+
+.folder-title {
+  padding: 10px;
+  background-color: #749cdb;
+  min-width: 100%;
+  border-radius: 4px;
+}
+.title {
+  margin-bottom: 0;
+}
+
+.folder-subfolder {
+  padding: 10px 0 0 10px;
+}
+
+.subfolder {
+  margin-bottom: 0;
+}
+
+.folder-links {
+  padding: 10px;
+  min-width: 100%;
+  text-align: left;
+}
+
+.unstyled-list {
+  list-style: none;
+  padding: 0 10px 0 10px;
+  margin-bottom: 0;
+}
+
+.favicon {
+  vertical-align: middle;
+  margin-top: -10px;
+  margin-bottom: -6px;
+}
+
+.hyperlink {
+  color: #000;
+}
+
+.hyperlink:hover {
+  color: #525253;
+}
+
+.category {
+  color: #fff;
+}
