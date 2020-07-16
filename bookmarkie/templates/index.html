@@ -14,11 +14,11 @@
       href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800,900"
       rel="stylesheet"
     />
-
-    <link
-      rel="stylesheet"
-      href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
-    />
+    <!-- fontawesome -->
+    <script
+      src="https://kit.fontawesome.com/d5cb6b5454.js"
+      crossorigin="anonymous"
+    ></script>
     <!-- stylesheets -->
     <link
       rel="stylesheet"
@@ -41,172 +41,226 @@
       <nav id="sidebar">
         <div class="custom-menu">
           <button type="button" id="sidebarCollapse" class="btn btn-secondary">
-            <i class="fa fa-bars"></i>
+            <i class="fas fa-bars"></i>
             <span class="sr-only">Toggle Menu</span>
           </button>
         </div>
         <div class="category-wrapper">
           <h1><a href="#" class="logo">Categories</a></h1>
           <ul class="list-unstyled components mb-5">
-            <li class="active"><a href="#">Homepage</a></li>
-            <li><a href="#">Dashboard</a></li>
-            <li><a href="#">Friends</a></li>
-            <li><a href="#">Subcription</a></li>
-            <li><a href="#">Settings</a></li>
-            <li><a href="#">Information</a></li>
+            <li class="active"><a class="cat-folder" href="#">Homepage</a></li>
+            <li><a class="cat-folder" href="#">Dashboard</a></li>
+            <li><a class="cat-folder" href="#">Friends</a></li>
+            <li><a class="cat-folder" href="#">Subcription</a></li>
+            <li><a class="cat-folder" href="#">Settings</a></li>
+            <li><a class="cat-folder" href="#">Information</a></li>
           </ul>
         </div>
       </nav>
       <!-- Page Content  -->
       <div id="content" class="p-4 p-md-5 pt-5">
         <h2 class="mb-4 category"># Category Name!</h2>
-        <div class="category-container">
-          <div class="folder">
-            <div class="folder-title">
-              <h4 class="title">Folder Name</h4>
-            </div>
-            <div class="folder-subfolder">
-              <h5 class="subfolder">SubFolder Name</h5>
-            </div>
-            <div class="folder-links">
-              <ul class="links unstyled-list">
-                <li class="link">
-                  <div class="link-div">
-                    <img
-                      class="favicon"
-                      src="https://www.google.com/s2/favicons?domain=www.google.com"
-                      alt=""
-                    />
-                    <a class="hyperlink" href="https://www.google.com">
-                      Link 1</a
-                    >
-                  </div>
-                </li>
-                <li class="link">
-                  <div class="link-div">
-                    <img
-                      class="favicon"
-                      src="https://www.google.com/s2/favicons?domain=www.google.com"
-                      alt=""
-                    />
-                    <a class="hyperlink" href="https://www.google.com">
-                      Link 2</a
-                    >
-                  </div>
-                </li>
-                <li class="link">
-                  <div class="link-div">
-                    <img
-                      class="favicon"
-                      src="https://www.google.com/s2/favicons?domain=www.google.com"
-                      alt=""
-                    />
-                    <a class="hyperlink" href="https://www.google.com">
-                      Link 3</a
-                    >
-                  </div>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-        <div class="category-container">
-          <div class="folder">
-            <div class="folder-title">
-              <h4 class="title">Folder Name</h4>
-            </div>
-            <div class="folder-subfolder">
-              <h5 class="subfolder">SubFolder Name</h5>
-            </div>
-            <div class="folder-links">
-              <ul class="links unstyled-list">
-                <li class="link">
-                  <div class="link-div">
-                    <img
-                      class="favicon"
-                      src="https://www.google.com/s2/favicons?domain=www.google.com"
-                      alt=""
-                    />
-                    <a class="hyperlink" href="https://www.google.com">
-                      Link 1</a
-                    >
-                  </div>
-                </li>
-                <li class="link">
-                  <div class="link-div">
-                    <img
-                      class="favicon"
-                      src="https://www.google.com/s2/favicons?domain=www.google.com"
-                      alt=""
-                    />
-                    <a class="hyperlink" href="https://www.google.com">
-                      Link 2</a
-                    >
-                  </div>
-                </li>
-                <li class="link">
-                  <div class="link-div">
-                    <img
-                      class="favicon"
-                      src="https://www.google.com/s2/favicons?domain=www.google.com"
-                      alt=""
-                    />
-                    <a class="hyperlink" href="https://www.google.com">
-                      Link 3</a
-                    >
-                  </div>
-                </li>
-              </ul>
+        <button type="button" id="sidebarCollapse" class="btn btn-secondary">
+          <i class="fas fa-globe-africa"></i>
+          <span class="sr-only">Toggle Menu</span>
+        </button>
+        <div class="main">
+          <div class="folder-wrapper">
+            <div class="folder">
+              <div class="folder-title">
+                <h5 class="title">Folder Name 1</h5>
+                <div>
+                  <button
+                    type="button"
+                    class="btn btn-outline-dark folder-button"
+                  >
+                    <i class="fas fa-sort-down"></i>
+                    <span class="sr-only">Toggle Menu</span>
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-outline-dark folder-button"
+                  >
+                    <i class="fas fa-ellipsis-v"></i>
+                    <span class="sr-only">Toggle Menu</span>
+                  </button>
+                </div>
+              </div>
+              <div class="folder-subfolder">
+                <h6 class="subfolder">SubFolder Name</h6>
+              </div>
+              <div class="folder-links">
+                <ul class="links unstyled-list">
+                  <li class="link">
+                    <div class="link-div">
+                      <img
+                        class="favicon"
+                        src="https://www.google.com/s2/favicons?domain=www.google.com"
+                        alt=""
+                      />
+                      <a class="hyperlink" href="https://www.google.com">
+                        Link 1</a
+                      >
+                    </div>
+                  </li>
+                  <li class="link">
+                    <div class="link-div">
+                      <img
+                        class="favicon"
+                        src="https://www.google.com/s2/favicons?domain=www.google.com"
+                        alt=""
+                      />
+                      <a class="hyperlink" href="https://www.google.com">
+                        Link 2</a
+                      >
+                    </div>
+                  </li>
+                  <li class="link">
+                    <div class="link-div">
+                      <img
+                        class="favicon"
+                        src="https://www.google.com/s2/favicons?domain=www.google.com"
+                        alt=""
+                      />
+                      <a class="hyperlink" href="https://www.google.com">
+                        Link 3</a
+                      >
+                    </div>
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
-        </div>
-        <div class="category-container">
-          <div class="folder">
-            <div class="folder-title">
-              <h4 class="title">Folder Name</h4>
+          <div class="folder-wrapper">
+            <div class="folder">
+              <div class="folder-title">
+                <h5 class="title">Folder Name 2</h5>
+                <div>
+                  <button
+                    type="button"
+                    class="btn btn-outline-dark folder-button"
+                  >
+                    <i class="fas fa-sort-down"></i>
+                    <span class="sr-only">Toggle Menu</span>
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-outline-dark folder-button"
+                  >
+                    <i class="fas fa-ellipsis-v"></i>
+                    <span class="sr-only">Toggle Menu</span>
+                  </button>
+                </div>
+              </div>
+              <div class="folder-subfolder">
+                <h6 class="subfolder">SubFolder Name</h6>
+              </div>
+              <div class="folder-links">
+                <ul class="links unstyled-list">
+                  <li class="link">
+                    <div class="link-div">
+                      <img
+                        class="favicon"
+                        src="https://www.google.com/s2/favicons?domain=www.google.com"
+                        alt=""
+                      />
+                      <a class="hyperlink" href="https://www.google.com">
+                        Link 1</a
+                      >
+                    </div>
+                  </li>
+                  <li class="link">
+                    <div class="link-div">
+                      <img
+                        class="favicon"
+                        src="https://www.google.com/s2/favicons?domain=www.google.com"
+                        alt=""
+                      />
+                      <a class="hyperlink" href="https://www.google.com">
+                        Link 2</a
+                      >
+                    </div>
+                  </li>
+                  <li class="link">
+                    <div class="link-div">
+                      <img
+                        class="favicon"
+                        src="https://www.google.com/s2/favicons?domain=www.google.com"
+                        alt=""
+                      />
+                      <a class="hyperlink" href="https://www.google.com">
+                        Link 3</a
+                      >
+                    </div>
+                  </li>
+                </ul>
+              </div>
             </div>
-            <div class="folder-subfolder">
-              <h5 class="subfolder">SubFolder Name</h5>
-            </div>
-            <div class="folder-links">
-              <ul class="links unstyled-list">
-                <li class="link">
-                  <div class="link-div">
-                    <img
-                      class="favicon"
-                      src="https://www.google.com/s2/favicons?domain=www.google.com"
-                      alt=""
-                    />
-                    <a class="hyperlink" href="https://www.google.com">
-                      Link 1</a
-                    >
-                  </div>
-                </li>
-                <li class="link">
-                  <div class="link-div">
-                    <img
-                      class="favicon"
-                      src="https://www.google.com/s2/favicons?domain=www.google.com"
-                      alt=""
-                    />
-                    <a class="hyperlink" href="https://www.google.com">
-                      Link 2</a
-                    >
-                  </div>
-                </li>
-                <li class="link">
-                  <div class="link-div">
-                    <img
-                      class="favicon"
-                      src="https://www.google.com/s2/favicons?domain=www.google.com"
-                      alt=""
-                    />
-                    <a class="hyperlink" href="https://www.google.com">
-                      Link 3</a
-                    >
-                  </div>
-                </li>
-              </ul>
+          </div>
+          <div class="folder-wrapper">
+            <div class="folder">
+              <div class="folder-title">
+                <h5 class="title">Folder Name 3</h5>
+                <div>
+                  <button
+                    type="button"
+                    class="btn btn-outline-dark folder-button"
+                  >
+                    <i class="fas fa-sort-down"></i>
+                    <span class="sr-only">Toggle Menu</span>
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-outline-dark folder-button"
+                  >
+                    <i class="fas fa-ellipsis-v"></i>
+                    <span class="sr-only">Toggle Menu</span>
+                  </button>
+                </div>
+              </div>
+              <div class="folder-subfolder">
+                <h6 class="subfolder">SubFolder Name</h6>
+              </div>
+              <div class="folder-links">
+                <ul class="links unstyled-list">
+                  <li class="link">
+                    <div class="link-div">
+                      <img
+                        class="favicon"
+                        src="https://www.google.com/s2/favicons?domain=www.google.com"
+                        alt=""
+                      />
+                      <a class="hyperlink" href="https://www.google.com">
+                        Link 1</a
+                      >
+                    </div>
+                  </li>
+                  <li class="link">
+                    <div class="link-div">
+                      <img
+                        class="favicon"
+                        src="https://www.google.com/s2/favicons?domain=www.google.com"
+                        alt=""
+                      />
+                      <a class="hyperlink" href="https://www.google.com">
+                        Link 2</a
+                      >
+                    </div>
+                  </li>
+                  <li class="link">
+                    <div class="link-div">
+                      <img
+                        class="favicon"
+                        src="https://www.google.com/s2/favicons?domain=www.google.com"
+                        alt=""
+                      />
+                      <a class="hyperlink" href="https://www.google.com">
+                        Link 3</a
+                      >
+                    </div>
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>

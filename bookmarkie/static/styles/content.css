@@ -1,8 +1,12 @@
 body {
   background-color: #282c34;
 }
+.main {
+  display: flex;
+  flex-wrap: wrap;
+}
 
-.category-container {
+.folder-wrapper {
   display: block;
   width: 450px;
 }
@@ -18,14 +22,21 @@ body {
   padding: 10px;
   background-color: #749cdb;
   min-width: 100%;
+  display: flex;
+  justify-content: space-between;
   border-radius: 4px;
 }
+
 .title {
   margin-bottom: 0;
+}
+.folder-button {
+  border: none;
 }
 
 .folder-subfolder {
   padding: 10px 0 0 10px;
+  color: rgb(24, 24, 24);
 }
 
 .subfolder {
