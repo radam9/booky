@@ -24,8 +24,8 @@ class Url(db.Model):
     id-> id of the url
     title-> title of url
     url-> url address
-    date_add-> date url was added on
-    date_modify-> date url was last modified
+    date_added-> date url was added on
+    date_modified-> date url was last modified
     icon-> location to favicon.ico for the app, not standard html content
     tags-> tags describing url
     position-> current position to remember order of urls in directory
@@ -36,8 +36,8 @@ class Url(db.Model):
     id = Column(Integer, primary_key=True)
     title = Column(String(256))
     url = Column(String(500), nullable=False)
-    date_add = Column(Date, nullable=False, default=datetime.utcnow)
-    # date_modify = Column(Date)
+    date_added = Column(Date, nullable=False, default=datetime.utcnow)
+    # date_modified = Column(Date)
     # icon = Column(String(256))
     # tags = Column(String(500))
     # position = Column(Integer)
@@ -68,8 +68,8 @@ class Url(db.Model):
             "id": self.id,
             "title": self.title,
             "url": self.url,
-            "date_add": self.date_add,
-            # "date_modify": self.date_modify,
+            "date_added": self.date_added,
+            # "date_modified": self.date_modified,
             # "icon": self.icon,
             # "tags": self.tags,
             # "position": self.position,
