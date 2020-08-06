@@ -8,7 +8,7 @@ def indexer(item, index):
     """
     Add position index for urls and folders
     """
-    if item.get("type") in ["url", "folder"]:
+    if item.get("type") in {"url", "folder"}:
         item["index"] = index
         index += 1
     return index
