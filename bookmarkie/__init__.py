@@ -76,9 +76,9 @@ def create_app(test_config=None):
             body = request.get_json()
             title = body.get("title", None)
             url = body.get("url", None)
-            direcotory_id = body.get("directory_id", None)
+            direcotory_id = body.get("parent_id", None)
             # Create bookmark
-            bookmark = Url(title, url, direcotory_id)
+            bookmark = Url(title, url, parent_id)
             bookmark.insert()
             return (
                 jsonify(
@@ -103,15 +103,15 @@ def create_app(test_config=None):
         try:
             # Get request body
             body = request.get_json()
-            name = body.get("name", None)
+            title = body.get("title", None)
             # Create directory
-            directory = Directory(name)
+            directory = Directory(title)
             directory.insert()
             return (
                 jsonify(
                     {
                         "Success": True,
-                        "Message": f"The Directory ({directory.name} was created successfully!)",
+                        "Message": f"The Directory ({directory.title} was created successfully!)",
                     }
                 ),
                 200,
@@ -142,15 +142,15 @@ def create_app(test_config=None):
             body = request.get_json()
             title = body.get("title", None)
             url = body.get("url", None)
-            directory_id = body.get("directory_id", None)
+            parent_id = body.get("parent_id", None)
 
             # Modify bookmark
             if title:
                 bookmark.title = title
             if url:
                 bookmark.url = url
-            if directory_id:
-                bookmark.directory_id = directory_id
+            if parent_id:
+                bookmark.parent_id = parent_id
             bookmark.update()
             return (
                 jsonify(
@@ -181,15 +181,15 @@ def create_app(test_config=None):
         try:
             # Get request body
             body = request.get_json()
-            name = body.get("name", None)
+            title = body.get("title", None)
             # Modify directory
-            directory.name = name
+            directory.title = title
             directory.update()
             return (
                 jsonify(
                     {
                         "Success": True,
-                        "Message": f"The directory ({directory.name}) was modified successfully!",
+                        "Message": f"The directory ({directory.title}) was modified successfully!",
                     }
                 ),
                 200,
@@ -238,7 +238,7 @@ def create_app(test_config=None):
                 jsonify(
                     {
                         "Success": True,
-                        "Message": f"The Directory ({directory.name}) was deleted successfully!",
+                        "Message": f"The Directory ({directory.title}) was deleted successfully!",
                     }
                 ),
                 200,

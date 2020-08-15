@@ -1,69 +1,64 @@
 from bs4 import BeautifulSoup
+from .models import Directory, Url
+from datetime import datetime
 
-# Counter for the id of each item (folders and urls)
-ID = 1
+
+def format_datetime(date):
+    return datetime.fromtimestamp(int(date))
 
 
 def indexer(item, index):
     """
     Add position index for urls and folders
     """
-    if item.get("type") in {"url", "folder"}:
-        item["index"] = index
+    if isinstance(item, Directory):
+        item.position = index
+        index += 1
+        item.update()
+    elif isinstance(item, Url):
+        item.position = index
         index += 1
     return index
 
 
 def parse_url(child, parent_id):
     """
-    Function that parses a url tag <DT><A>
+    Function that parses a url tag <DT><A>, creates a url and returns the ID
     """
-    global ID
-    result = {
-        "type": "url",
-        "id": ID,
-        "index": None,
-        "parent_id": parent_id,
-        "url": child.get("href"),
-        "title": child.text,
-        "date_added": child.get("add_date"),
-        "icon": child.get("icon"),
-    }
-    # getting icon_uri & tags are only applicable in Firefox
+    date_added = format_datetime(child.get("add_date"))
+    url = Url(
+        title=child.text,
+        url=child.get("href"),
+        parent_id=parent_id,
+        icon=child.get("icon"),
+        date_added=date_added,
+    )
+    ## still need to parse Icon and Icon_URI, or run a different function that gets the icon for the url.
+
+    # getting tags and icon_uri
     icon_uri = child.get("icon_uri")
     if icon_uri:
-        result["icon_uri"] = icon_uri
+        url.icon_uri = icon_uri
     tags = child.get("tags")
     if tags:
-        result["tags"] = tags.split(",")
-    ID += 1
-    return result
+        url.tags = tags.split(",")
+    return url
 
 
 def parse_folder(child, parent_id):
     """
     Function that parses a folder tag <DT><H3>
     """
-    global ID
-    result = {
-        "type": "folder",
-        "id": ID,
-        "index": None,
-        "parent_id": parent_id,
-        "title": child.text,
-        "date_added": child.get("add_date"),
-        "date_modified": child.get("last_modified"),
-        "special": None,
-        "children": [],
-    }
+    date_added = format_datetime(child.get("add_date"))
+    folder = Directory(title=child.text, parent_id=parent_id, date_added=date_added,)
     # for Bookmarks Toolbar in Firefox and Bookmarks bar in Chrome
     if child.get("personal_toolbar_folder"):
-        result["special"] = "toolbar"
+        folder.special = "toolbar"
     # for Other Bookmarks in Firefox
     if child.get("unfiled_bookmarks_folder"):
-        result["special"] = "other_bookmarks"
-    ID += 1
-    return result
+        folder.special = "other_bookmarks"
+    folder.insert()
+    return folder
 
 
 def recursive_parse(node, parent_id):
@@ -74,46 +69,30 @@ def recursive_parse(node, parent_id):
     # case were node is a folder
     if node.name == "dt":
         folder = parse_folder(node.contents[0], parent_id)
-        items = recursive_parse(node.contents[2], folder["id"])
-        folder["children"] = items
+        recursive_parse(node.contents[2], folder.id)
         return folder
     # case were node is a list
     elif node.name == "dl":
-        data = []
         for child in node:
             tag = child.contents[0].name
             if tag == "h3":
                 folder = recursive_parse(child, parent_id)
                 index = indexer(folder, index)
-                data.append(folder)
             elif tag == "a":
                 url = parse_url(child.contents[0], parent_id)
                 index = indexer(url, index)
-                data.append(url)
-        return data
+                url.insert()
 
 
 def parse_root_firefox(root):
     """
     Function to parse the root of the firefox bookmark tree
     """
-    # create bookmark menu folder and give it an ID
-    global ID
-    bookmarks = {
-        "type": "folder",
-        "id": ID,
-        "index": 0,
-        "parent_id": 0,
-        "title": "Bookmarks Menu",
-        "date_added": None,
-        "date_modified": None,
-        "special": "main",
-        "children": [],
-    }
-    ID += 1
+    # create bookmark menu folder
+    bookmarks = Directory(title="Bookmarks Menu", parent_id=0, position=0)
+    bookmarks.insert()
     index = 0  # index for bookmarks/bookmarks menu
     main_index = 1  # index for root level
-    result = [0]  # root contents
     for node in root:
         # skip node if not <DT>
         if node.name != "dt":
@@ -121,72 +100,52 @@ def parse_root_firefox(root):
         # get tag of first node child
         tag = node.contents[0].name
         if tag == "a":
-            url = parse_url(node.contents[0], 1)
-            index = indexer(node, index)
-            bookmarks["children"].append(url)
+            url = parse_url(node.contents[0], bookmarks.id)
+            index = indexer(url, index)
+            url.insert()
         if tag == "h3":
-            folder = recursive_parse(node, 1)
+            folder = recursive_parse(node, bookmarks.id)
             # check for special folders (Other Bookmarks / Toolbar)
             # add them to root level instead of inside bookmarks
-            if folder["special"]:
-                folder["parent_id"] = 0
+            try:
+                check = folder.special
+            except AttributeError:
+                check = None
+            if check:
+                folder.parent_id = 0
                 main_index = indexer(folder, main_index)
-                result.append(folder)
             else:
                 index = indexer(folder, index)
-                bookmarks["children"].append(folder)
-
-    result[0] = bookmarks
-    return result
 
 
 def parse_root_chrome(root):
     """
     Function to parse the root of the chrome bookmark tree
     """
-    global ID
-    # Create "other bookmarks" folder and give it an ID
-    other_bookmarks = {
-        "type": "folder",
-        "id": ID,
-        "index": 1,
-        "parent_id": 0,
-        "title": "Other Bookmarks",
-        "date_added": None,
-        "date_modified": None,
-        "special": "other_bookmarks",
-        "children": [],
-    }
-    ID += 1
-    result = [0]
-    index = 0
+    # Create "other bookmarks" folder
+    other_bookmarks = Directory(title="Other Bookmarks", parent_id=0, position=1)
+    other_bookmarks.insert()
+    index = 0  # Index counter for position of Urls/Directories
     for node in root:
         if node.name != "dt":
             continue
         # get the first child element (<H3> or <A>)
         element = node.contents[0]
         tag = element.name
-        # if an url tag is found at root level, add it to "Other Bookmarks" children
+        # if an url tag is found at root level, add it to "Other Bookmarks"
         if tag == "a":
-            url = parse_url(node.contents[0], 1)
-            index = indexer(node, index)
-            other_bookmarks["children"].append(url)
+            url = parse_url(node.contents[0], other_bookmarks.id)
+            index = indexer(url, index)
+            url.insert()
         elif tag == "h3":
             # if a folder tag is found at root level, check if its the main "Bookmarks Bar", else append to "Other Bookmarks" children
             if element.get("personal_toolbar_folder"):
                 folder = recursive_parse(node, 0)
-                folder["index"] = 0
-                folder["special"] = "main"
-                result[0] = folder
+                folder.position = 0
+                folder.update()
             else:
-                parent_id = other_bookmarks["id"]
-                folder = recursive_parse(node, parent_id)
+                folder = recursive_parse(node, other_bookmarks.id)
                 index = indexer(folder, index)
-                other_bookmarks["children"].append(folder)
-    # add "Other Bookmarks" folder to root if it has children
-    if len(other_bookmarks["children"]) > 0:
-        result.append(other_bookmarks)
-    return result
 
 
 # Main function
@@ -198,22 +157,12 @@ def main(bookmarks_file):
     with open(bookmarks_file, encoding="Utf-8") as f:
         soup = BeautifulSoup(markup=f, features="html5lib", from_encoding="Utf-8")
     # Check if HTML Bookmark version is Chrome or Firefox
-    # Prepare the data to be parsed
+    # Get the main DL list (root) out of the html file
     # Parse the root of the bookmarks tree
     heading = soup.find("h1")
     root = soup.find("dl")
     if heading.text == "Bookmarks":
-        bookmarks = parse_root_chrome(root)
+        parse_root_chrome(root)
     elif heading.text == "Bookmarks Menu":
-        bookmarks = parse_root_firefox(root)
-    return bookmarks
+        parse_root_firefox(root)
 
-
-# source = "/home/vagabond/Downloads/booky/temp_helper_files/bookmarks/bookmarks_chrome_2020_07_20.html"
-# output = source.split("/")[-1].replace(".html", ".json")
-# temp = main(source)
-
-# import json
-
-# with open(output, "w", encoding="Utf-8") as f:
-#     json.dump(temp, f, ensure_ascii=False)

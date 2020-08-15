@@ -1,6 +1,7 @@
 1. Main project to do list:
    - Change highlight of selected category
    - Modify bookmarks_parser to parse html into models class and add to database
+   - Modify bookmarks_parser.parse_url to get the icon and icon_uri (or get the icon from an outside source like google favicons)
    - Modify main view/route to quiery db and put items in html
    - Add "right-click menu"/"menu-dropdown"/"modal window" to delete/edit links
    - Add "right-click menu"/"menu-dropdown"/"modal window" to delete/edit folders

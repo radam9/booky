@@ -1,6 +1,7 @@
 import os
 from bookmarkie.models import *
 from bookmarkie import create_app
+from bookmarkie import bookmarks_parser
 
 
 def main(env="test"):
@@ -55,6 +56,33 @@ def main(env="test"):
     db.session.commit()
 
 
+# Temporary function just to test the "bookmarks_parser.py" script
+def main_books():
+    # Set Bookmarks file path
+    bookmark_file = "/home/vagabond/Downloads/booky/temp_helper_files/bookmarks/bookmarks_chrome_2020_07_20.html"
+
+    # Set up database info
+    database_filename = "bookmarkie.db"
+    project_dir = os.path.dirname(os.path.abspath(__file__))
+    database_path = "sqlite:///{}".format(os.path.join(project_dir, database_filename))
+
+    # initialize app
+    app = create_app()
+
+    # initialize database
+    setup_db(app, database_path)
+
+    # Create Database
+    db.drop_all()
+    db.create_all()
+
+    # Parse bookmarks
+    bookmarks_parser.main(bookmark_file)
+
+    # Commit data to database
+    db.session.commit()
+
+
 def empty_db():
     database_filename = "bookmarkie_test.db"
     project_dir = os.path.dirname(os.path.abspath(__file__))
@@ -70,7 +98,10 @@ def empty_db():
     db.create_all()
 
 
+# if __name__ == "__main__":
+#     main(env="production")
+# else:
+#     main()
+
 if __name__ == "__main__":
-    main(env="production")
-else:
-    main()
+    main_books()

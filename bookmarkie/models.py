@@ -1,6 +1,6 @@
 import os
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import Column, Integer, String, Date
+from sqlalchemy import Column, Integer, String, Date, DateTime
 from datetime import datetime
 
 # Set up database info
@@ -20,37 +20,66 @@ def setup_db(app, database_path=database_path):
 
 # Models
 class Url(db.Model):
-    """ Model representing the URLs, where:
-    id-> id of the url
-    title-> title of url
-    url-> url address
-    date_added-> date url was added on
-    date_modified-> date url was last modified
-    icon-> location to favicon.ico for the app, not standard html content
-    tags-> tags describing url
-    position-> current position to remember order of urls in directory
-    directory_id-> id of the directory the url is contained in"""
+    """ Model representing the URLs
+    ...
+    Attributes
+    ----------
+    id : int
+        id of the url
+    title : str
+        title of url
+    url : str
+        url address
+    date_added : datetime
+        date url was added on
+    icon : str
+        html icon data
+    icon_uri : str
+        html icon_uri found in firefox bookmarks
+    tags : str
+        tags describing url
+    position : int
+        current position to remember order of urls in directory
+    parent_id : int
+        id of the directory the url is contained in"""
 
     __tablename__ = "Url"
 
     id = Column(Integer, primary_key=True)
     title = Column(String(256))
     url = Column(String(500), nullable=False)
-    date_added = Column(Date, nullable=False, default=datetime.utcnow)
-    # date_modified = Column(Date)
-    # icon = Column(String(256))
-    # tags = Column(String(500))
-    # position = Column(Integer)
-    directory_id = Column(Integer, db.ForeignKey("Directory.id"))
+    date_added = Column(DateTime, nullable=False, default=datetime.utcnow)
+    icon = Column(String)
+    icon_uri = Column(String)
+    tags = Column(String(500))
+    position = Column(Integer)
+    parent_id = Column(Integer, db.ForeignKey("Directory.id"))
 
-    def __init__(self, title, url, directory_id):
-        # self.title = if title = none use url
-        self.title = title
+    def __init__(
+        self,
+        title,
+        url,
+        parent_id,
+        date_added=None,
+        icon=None,
+        icon_uri=None,
+        tags=None,
+        position=None,
+    ):
+        if title == None:
+            self.title = url
+        else:
+            self.title = title
         self.url = url
-        self.directory_id = directory_id
+        self.date_added = date_added
+        self.icon = icon
+        self.icon_uri = icon_uri
+        self.tags = tags
+        self.position = position
+        self.parent_id = parent_id
 
     def __repr__(self):
-        return f"{self.url} -in- {self.directory_id}"
+        return f"{self.url} -in- {self.parent_id}"
 
     def insert(self):
         db.session.add(self)
@@ -69,11 +98,11 @@ class Url(db.Model):
             "title": self.title,
             "url": self.url,
             "date_added": self.date_added,
-            # "date_modified": self.date_modified,
-            # "icon": self.icon,
-            # "tags": self.tags,
-            # "position": self.position,
-            "directory_id": self.directory_id,
+            "icon": self.icon,
+            "icon_uri": self.icon_uri,
+            "tags": self.tags,
+            "position": self.position,
+            "parent_id": self.parent_id,
         }
 
     @staticmethod
@@ -82,19 +111,30 @@ class Url(db.Model):
 
 
 class Directory(db.Model):
-    """ Model representing bookmark directories, where:
-    id-> id of the directory
-    name-> name of the directory
-    abs_path-> absolute path of the directory from the root (using directory id not name)
-    parent_id-> id of parent directory
-    urls-> urls contained in the directory"""
+    """ Model representing bookmark directories
+    ...
+    Attributes
+    ----------
+    id : int
+        id of the directory
+    title : str
+        name of the directory
+    date_added : datetime
+        date directory was added on
+    parent_id : int
+        id of parent directory
+    position : int
+        current position in parent directory
+    urls : db relationship
+        urls contained in the directory"""
 
     __tablename__ = "Directory"
 
     id = Column(Integer, primary_key=True)
-    name = Column(String(50), nullable=False)
-    # abs_path = Column(String(256), nullable=False)
-    # parent_id = Column(Integer, nullable=False)
+    title = Column(String(50), nullable=False)
+    date_added = Column(DateTime, nullable=False, default=datetime.utcnow)
+    parent_id = Column(Integer, nullable=False)
+    position = Column(Integer)
     urls = db.relationship(
         "Url",
         cascade="save-update, merge, delete, delete-orphan",
@@ -102,13 +142,14 @@ class Directory(db.Model):
         lazy=False,
     )
 
-    def __init__(self, name):
-        self.name = name
-        # self.abs_path = abs_path
-        # self.parent_id = abs_path.split("/")[-1]
+    def __init__(self, title, parent_id, date_added=None, position=None):
+        self.title = title
+        self.date_added = date_added
+        self.parent_id = parent_id
+        self.position = position
 
     def __repr__(self):
-        return f"{self.name} -at- {self.abs_path}"
+        return f"{self.title} -at- {self.abs_path}"
 
     def insert(self):
         db.session.add(self)
@@ -124,9 +165,10 @@ class Directory(db.Model):
     def serialize(self):
         return {
             "id": self.id,
-            "name": self.name,
-            # "abs_path": self.abs_path,
-            # "parent_id": self.parent_id,
+            "title": self.title,
+            "parent_id": self.parent_id,
+            "date_added": self.date_added,
+            "position": self.position,
             "urls": [b.serialize() for b in self.urls],
         }
 
