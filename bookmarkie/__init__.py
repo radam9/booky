@@ -3,6 +3,7 @@ from flask import Flask, request, abort, jsonify, render_template
 from flask_sqlalchemy import SQLAlchemy
 from .models import setup_db, Url, Directory
 from werkzeug.exceptions import BadRequest
+from .get_favicon import get_favicon_iconuri
 
 
 # Raise error if no query results
@@ -74,11 +75,14 @@ def create_app(test_config=None):
         try:
             # Get request body
             body = request.get_json()
-            title = body.get("title", None)
-            url = body.get("url", None)
-            direcotory_id = body.get("parent_id", None)
+            title = body.get("title")
+            url = body.get("url")
+            parent_id = body.get("parent_id")
+            icon, icon_uri = get_favicon_iconuri(url)
             # Create bookmark
-            bookmark = Url(title, url, parent_id)
+            bookmark = Url(
+                title=title, url=url, parent_id=parent_id, icon=icon, icon_uri=icon_uri,
+            )
             bookmark.insert()
             return (
                 jsonify(
@@ -103,9 +107,10 @@ def create_app(test_config=None):
         try:
             # Get request body
             body = request.get_json()
-            title = body.get("title", None)
+            title = body.get("title")
+            parent_id = body.get("parent_id")
             # Create directory
-            directory = Directory(title)
+            directory = Directory(title=title, parent_id=parent_id)
             directory.insert()
             return (
                 jsonify(
@@ -122,10 +127,6 @@ def create_app(test_config=None):
         # Raise 422 error if not successful
         except Exception:
             abort(422)
-        # except Exception as e:
-        #     import traceback
-        #     traceback.print_exc()
-        #     abort(422)
 
     # Route to modify a bookmark
     @app.route("/bookmarks/<int:id>/modify", methods=["PATCH"])
@@ -140,17 +141,13 @@ def create_app(test_config=None):
         try:
             # Get request body
             body = request.get_json()
-            title = body.get("title", None)
-            url = body.get("url", None)
-            parent_id = body.get("parent_id", None)
-
-            # Modify bookmark
-            if title:
-                bookmark.title = title
-            if url:
-                bookmark.url = url
-            if parent_id:
-                bookmark.parent_id = parent_id
+            # list of attributes to search for inside the request body.
+            attrs = ["title", "url", "tags", "position", "parent_id"]
+            for attr in attrs:
+                value = body.get(attr)
+                if value:
+                    # Modify bookmark if attr exists
+                    setattr(bookmark, attr, value)
             bookmark.update()
             return (
                 jsonify(
@@ -181,9 +178,13 @@ def create_app(test_config=None):
         try:
             # Get request body
             body = request.get_json()
-            title = body.get("title", None)
-            # Modify directory
-            directory.title = title
+            # list of attributes to search for inside the request body.
+            attrs = ["title", "parent_id", "position"]
+            for attr in attrs:
+                value = body.get(attr)
+                if value:
+                    # Modify directory if attr exists
+                    setattr(directory, attr, value)
             directory.update()
             return (
                 jsonify(
@@ -249,7 +250,7 @@ def create_app(test_config=None):
 
     # 400 error handler
     @app.errorhandler(400)
-    def resource_not_found(error):
+    def bad_request(error):
         return (
             jsonify({"Success": False, "Error": 400, "Message": "Bad Request"}),
             400,
@@ -257,7 +258,7 @@ def create_app(test_config=None):
 
     # 401 error handler
     @app.errorhandler(401)
-    def resource_not_found(error):
+    def unauthorized(error):
         return (
             jsonify({"Success": False, "Error": 401, "Message": "Unauthorized"}),
             401,

@@ -14,6 +14,7 @@
    - Javascript to drag and drop items to different folders and have the move reflected on the database
    - Javascript API/Route (maybe with modal) edit folders/categories/bookmarks
    - get favicon.ico
+   - create a portable psql file (like in udacity trivia project) containing test data.
 2. Create script to export:
    - Chrome standard HTML
    - Chrome standard JSON

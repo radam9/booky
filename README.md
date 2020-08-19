@@ -28,15 +28,13 @@ This application is a first step towards a fully functional web-based bookmarks 
 The application is dependent on:
 
 - Python 3.7
+- Postgresql
 
 and the following tech stacks:
 
 - [Flask](https://flask.palletsprojects.com/en/master/), and its extensions:
   - [Flask-SQLAlchemy](https://flask-sqlalchemy.palletsprojects.com/en/master/)
   - [Flask-Migrate](https://flask-migrate.readthedocs.io/en/latest/)
-  - [Flask-Script](https://flask-script.readthedocs.io/en/latest/)
-  - [Flask-CORS](https://flask-cors.readthedocs.io/en/latest/)
-- [Jose](https://python-jose.readthedocs.io/en/latest/)
 
 ---
 
@@ -65,7 +63,8 @@ pip install -r requirements.txt
 
 ### Database Setup
 
-To setup the database run the `initialize_db.py` script using the following command:
+1. create the database bookmarkie (maybe also bookmarkie_test)
+2. To setup the database run the `initialize_db.py` script using the following command:
 
 ```
 python initialize_db.py
@@ -88,6 +87,8 @@ this will load all the environmental variables from `.flaskenv` file and start t
 ---
 
 ## Testing
+
+**NOTE** Make sure you created bookmarkie_test
 
 To run the `unittest` suite, ensure you are running the virtual environment and that your terminal is located at the root folder, then run the following command:
 

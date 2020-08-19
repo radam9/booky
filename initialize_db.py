@@ -1,6 +1,9 @@
 import os
+from flask import Flask
 from bookmarkie.models import *
-from bookmarkie import create_app
+from bookmarkie.models import Base
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 from bookmarkie import bookmarks_parser
 
 
@@ -67,20 +70,25 @@ def main_books():
     database_path = "sqlite:///{}".format(os.path.join(project_dir, database_filename))
 
     # initialize app
-    app = create_app()
+    app = Flask(__name__)
+    engine = create_engine(database_path)
+    Session = sessionmaker(bind=engine)
+    session = Session()
+    connection = engine.connect()
 
     # initialize database
     setup_db(app, database_path)
 
     # Create Database
-    db.drop_all()
-    db.create_all()
+    Base.metadata.drop_all(connection)
+    Base.metadata.create_all(connection)
+    session.commit()
 
     # Parse bookmarks
     bookmarks_parser.main(bookmark_file)
 
     # Commit data to database
-    db.session.commit()
+    session.commit()
 
 
 def empty_db():

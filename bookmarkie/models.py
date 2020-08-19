@@ -1,6 +1,10 @@
 import os
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import Column, Integer, String, Date, DateTime
+import sqlalchemy
+from sqlalchemy.event import listens_for, listen
+from sqlalchemy import Column, Integer, String, Date, DateTime, ForeignKey
+from sqlalchemy.orm import relationship, backref
+from sqlalchemy.ext.declarative import declarative_base
 from datetime import datetime
 
 # Set up database info
@@ -10,6 +14,7 @@ database_path = "sqlite:///{}".format(os.path.join(project_dir, database_filenam
 
 db = SQLAlchemy()
 
+
 # bind the flask appication and the SQLAlchemy service
 def setup_db(app, database_path=database_path):
     app.config["SQLALCHEMY_DATABASE_URI"] = database_path
@@ -18,8 +23,60 @@ def setup_db(app, database_path=database_path):
     db.init_app(app)
 
 
+Base = declarative_base()
+
 # Models
-class Url(db.Model):
+class Bookmark(Base, db.Model):
+    """Base model for the Url and Directory model.
+    (used to Single Table Inheritence)
+    ...
+    Attributes
+    ----------
+    id : int
+        id of the bookmark (url/directory)
+    title : str
+        title of bookmark (url/directory)
+    date_added : datetime
+        date bookmark (url/directory) was added on
+    position : int
+        current position to remember order of bookmark (url/directory) in directory
+    parent_id : int
+        id of the directory the bookmark (url/directory) is contained in
+    parent : relation
+        Many to One relation for the Directory, containing the bookmarks (url/directory)
+    """
+
+    __tablename__ = "Bookmark"
+
+    id = Column(Integer, primary_key=True)
+    title = Column(String(256))
+    date_added = Column(DateTime, nullable=False, default=datetime.utcnow)
+    position = Column(Integer)
+    parent_id = Column(Integer, ForeignKey("Bookmark.id"), nullable=True)
+    parent = relationship(
+        "Bookmark",
+        cascade="save-update, merge, delete",
+        backref="children",
+        lazy=False,
+        remote_side="Bookmark.id",
+    )
+    type = Column(String)
+
+    __mapper_args__ = {"polymorphic_on": type, "polymorphic_identity": "Bookmark"}
+
+    def insert(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def update(self):
+        db.session.commit()
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
+
+class Url(Bookmark):
     """ Model representing the URLs
     ...
     Attributes
@@ -43,17 +100,12 @@ class Url(db.Model):
     parent_id : int
         id of the directory the url is contained in"""
 
-    __tablename__ = "Url"
-
-    id = Column(Integer, primary_key=True)
-    title = Column(String(256))
-    url = Column(String(500), nullable=False)
-    date_added = Column(DateTime, nullable=False, default=datetime.utcnow)
+    url = Column(String(500))
     icon = Column(String)
     icon_uri = Column(String)
     tags = Column(String(500))
-    position = Column(Integer)
-    parent_id = Column(Integer, db.ForeignKey("Directory.id"))
+
+    __mapper_args__ = {"polymorphic_identity": "Url"}
 
     def __init__(
         self,
@@ -64,7 +116,6 @@ class Url(db.Model):
         icon=None,
         icon_uri=None,
         tags=None,
-        position=None,
     ):
         if title == None:
             self.title = url
@@ -75,22 +126,10 @@ class Url(db.Model):
         self.icon = icon
         self.icon_uri = icon_uri
         self.tags = tags
-        self.position = position
         self.parent_id = parent_id
 
     def __repr__(self):
-        return f"{self.url} -in- {self.parent_id}"
-
-    def insert(self):
-        db.session.add(self)
-        db.session.commit()
-
-    def update(self):
-        db.session.commit()
-
-    def delete(self):
-        db.session.delete(self)
-        db.session.commit()
+        return f"{self.title} (id: {self.id}) -in- {self.parent}"
 
     def serialize(self):
         return {
@@ -110,7 +149,7 @@ class Url(db.Model):
         return [b.serialize() for b in bookmarks]
 
 
-class Directory(db.Model):
+class Directory(Bookmark):
     """ Model representing bookmark directories
     ...
     Attributes
@@ -128,39 +167,15 @@ class Directory(db.Model):
     urls : db relationship
         urls contained in the directory"""
 
-    __tablename__ = "Directory"
+    __mapper_args__ = {"polymorphic_identity": "Directory"}
 
-    id = Column(Integer, primary_key=True)
-    title = Column(String(50), nullable=False)
-    date_added = Column(DateTime, nullable=False, default=datetime.utcnow)
-    parent_id = Column(Integer, nullable=False)
-    position = Column(Integer)
-    urls = db.relationship(
-        "Url",
-        cascade="save-update, merge, delete, delete-orphan",
-        backref="directory",
-        lazy=False,
-    )
-
-    def __init__(self, title, parent_id, date_added=None, position=None):
+    def __init__(self, title, parent_id, date_added=None):
         self.title = title
         self.date_added = date_added
         self.parent_id = parent_id
-        self.position = position
 
     def __repr__(self):
-        return f"{self.title} -at- {self.abs_path}"
-
-    def insert(self):
-        db.session.add(self)
-        db.session.commit()
-
-    def update(self):
-        db.session.commit()
-
-    def delete(self):
-        db.session.delete(self)
-        db.session.commit()
+        return f"{self.title} (id: {self.id})"
 
     def serialize(self):
         return {
@@ -169,9 +184,18 @@ class Directory(db.Model):
             "parent_id": self.parent_id,
             "date_added": self.date_added,
             "position": self.position,
-            "urls": [b.serialize() for b in self.urls],
+            "children": [b.serialize() for b in self.children],
         }
 
     @staticmethod
     def serialize_list(result):
         return [d.serialize() for d in result]
+
+
+# Event listener that will index Bookmarks before inserting them.
+@listens_for(Bookmark, "before_insert", propagate=True)
+def indexer(mapper, connect, self):
+    if self.parent_id:
+        position = len(Directory.query.get(self.parent_id).children)
+        self.position = position
+
