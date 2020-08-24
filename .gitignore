@@ -186,3 +186,4 @@ pip-selfcheck.json
 
 # End of https://www.gitignore.io/api/venv,flask,python,visualstudiocode
 temp_helper_files/
+*.db

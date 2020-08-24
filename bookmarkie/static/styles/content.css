@@ -1,74 +1,126 @@
 body {
   background-color: #282c34;
 }
+
+a {
+  text-decoration: none;
+  color: black;
+}
+a :hover {
+  color: white;
+}
+ul {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+
+ul > ul {
+  padding-left: 7px;
+}
+li {
+  border-color: rgba(0, 0, 0, 0.125);
+  border-width: 1px 0 0 0;
+  border-style: solid;
+}
+li > div > a {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: "...   ";
+}
+
+/* grid layout attempt
+.main {
+    display: grid;
+    flex-wrap: wrap;
+    width: 100%;
+    grid-template-columns: repeat(auto-fill, 450px);
+    grid-gap: 20px;
+    grid-auto-flow: dense;
+}
+.folder-wrapper {
+    margin: 15px; <--- remove
+} 
+*/
+/* flex method
 .main {
   display: flex;
   flex-wrap: wrap;
-}
+} */
 
+.main {
+  columns: auto 450px;
+  column-gap: 15px;
+}
+.main-list {
+  background-color: #d1ffec;
+}
 .folder-wrapper {
-  display: block;
+  /* changing the display to block will cause the long list to be divided into two columns */
+  display: inline-block;
   width: 450px;
+  margin: 0 0 15px 0;
 }
 
 .folder {
-  margin: 20px;
-  width: 400px;
-  background-color: #abb2bf;
-  border-radius: 4px;
-}
-
-.folder-title {
-  padding: 10px;
-  background-color: #749cdb;
+  background-color: #04915c;
   min-width: 100%;
   display: flex;
   justify-content: space-between;
-  border-radius: 4px;
+  padding: 5px 0 5px 0;
+  /* border-color: rgba(0, 0, 0, 0.125);
+  border-width: 1px 0 0 0;
+  border-style: solid; */
 }
-
-.title {
-  margin-bottom: 0;
+.folder-title {
+  flex: 1;
+  padding: 3px 0 3px 5px;
 }
-.folder-button {
-  border: none;
+.folder-logo {
+  margin-right: 5px;
 }
-
-.folder-subfolder {
-  padding: 10px 0 0 10px;
-  color: rgb(24, 24, 24);
-}
-
 .subfolder {
-  margin-bottom: 0;
-}
-
-.folder-links {
-  padding: 10px;
+  background-color: #c5e3f4;
   min-width: 100%;
-  text-align: left;
+  display: flex;
+  justify-content: space-between;
+  border-color: rgba(0, 0, 0, 0.125);
+  border-width: 1px 0 0 0;
+  border-style: solid;
+}
+.subfolder-title {
+  flex: 1;
+  padding: 3px 0 3px 5px;
+  font-weight: 500;
 }
 
-.unstyled-list {
-  list-style: none;
-  padding: 0 10px 0 10px;
-  margin-bottom: 0;
+.link {
+  background-color: #d1ffec;
+  min-width: 100%;
+  display: flex;
+  justify-content: space-between;
+  /* border-width: 1px 0 0 0;
+  border-style: solid;
+  border-color: rgba(0, 0, 0, 0.125); */
 }
-
+.link-title {
+  flex: 1;
+  padding: 1px;
+}
+.modify-buttons {
+  color: rgb(147, 145, 145);
+  padding: 1px 7px 1px 1px;
+}
+.edit,
+.delete {
+  cursor: pointer;
+  outline: none;
+}
 .favicon {
   vertical-align: middle;
   margin-top: -10px;
   margin-bottom: -6px;
 }
-
-.hyperlink {
-  color: #000;
-}
-
-.hyperlink:hover {
-  color: #525253;
-}
-
 .category {
   color: #fff;
 }

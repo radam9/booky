@@ -21,7 +21,29 @@ def create_app(test_config=None):
     # Welcome home route
     @app.route("/")
     def index():
-        return render_template("index.html")
+        root = Directory.query.get("1")
+        return render_template("index.html", context={"root": root, "master": root})
+
+    # Directory display route
+    @app.route("/d/<int:dir_id>")
+    def display_directory(dir_id):
+        root = Directory.query.get("1")
+        directory = Directory.query.get(str(dir_id))
+        master = {
+            "title": directory.title,
+            "id": directory.id,
+            "links": [],
+            "folders": [],
+        }
+        for bookmark in directory.children:
+            if bookmark.type == "Url":
+                master["links"].append(bookmark)
+            elif bookmark.type == "Directory":
+                master["folders"].append(bookmark)
+
+        return render_template(
+            "display_directory.html", context={"root": root, "master": master}
+        )
 
     # Route to get all bookmarks
     @app.route("/bookmarks")

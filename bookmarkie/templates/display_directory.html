@@ -33,7 +33,51 @@
       <div id="content" class="p-4 p-md-5 pt-5">
         <h2 class="mb-4 category">{{ context.master.title }}</h2>
         <div class="main">
-          {% for mainfolder in context.master.children %}
+          {% if context.master.links|length > 0 %}
+          <div class="folder-wrapper">
+            <div class="folder">
+              <a
+                href="#mainfolder_{{ context.master.id }}"
+                class="folder-title"
+                data-toggle="collapse"
+                ><i class="fas folder-logo fa-sort-down"></i>{{ context.master.title
+                }}
+              </a>
+              <div class="modify-buttons">
+                <i class="fas edit fa-pen" id="{{ context.master.id }}"></i>
+                <i class="fas delete fa-times" id="{{ context.master.id }}"></i>
+              </div>
+            </div>
+            <ul
+              class="main-list collapse show"
+              id="mainfolder_{{ context.master.id }}"
+            >
+            {% for link in context.master.links %}
+            <li>
+              <div class="link">
+                <a href="{{ link.url }}" class="link-title"
+                  >
+                  {% if link.icon %}
+                  <img class="favicon" src="{{ link.icon }}" /> {{ link.title
+                  }}</a
+                >
+                  {% else %}
+                  <img class="favicon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAAdgAAAHYBTnsmCAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAH6SURBVDiNdZO/axRREMc/8y7h2DtSnKcQRBSuyx9gKYFYJbbGVrE4YyMEYt4mpFgVYXNbXHGJpBFFy9QxaVLoH2AhGLDwCBIRDBYJuptw3hubXV0ecbr5vu+PYXgjeBVFUS1N0xngujHmEoBz7gDYHQwGW91uNyvzpdyEYXhXVZ8C457vL6AOfBOR5TiOXxYPpjCy1j5T1edniI+CIBg3xtwAvqvqC2vtWhEuANbaFeCJJ/zsnLuVJMn7Ami326ONRqMH3AOWVldXYwnDsKWqe0C1JB4EQXA+iqJjf0ezs7OVVqu1BUyKyMSIc25ORKoebzTLsiNrbdEfAOv9fj/Z3NwcWmsfAh+cc3MjwLSfkteeqm6LyFXgQr7EoiaAQ2PMtFhrj4ExT/wqTdN2r9c7LYAwDKecc1dE5BOwk2uOR85IznwxwHA4HBpj1oGgjBtg3zP43Ww2B75rkiRv0zRtAIcFJiL7RlV3PO5YlmWPFhYW6h5OvV6/BjSL3jm3bYwxG8Cpx12pVCo/rbU/yqCqLvPv850YYzZMHMd94LGflte5KIpqAIuLizeBydL4URzH+8UtiLV2Hbh/hsltEfmoqu+AWi5ei+P4AaD+Md3Jj+nifyb6qqpLnU7n9d9JfMb8/HxQrVZngCngcg5/cc7t1mq1N1EUnZT5fwBV0MXmOmx04gAAAABJRU5ErkJggg==" /> {{ link.title
+                  }}</a
+                >
+                  {% endif %}
+                <div class="modify-buttons">
+                  <i class="fas edit fa-pen" id="{{ link.id }}"></i>
+                  <i class="fas delete fa-times" id="{{ link.id }}"></i>
+                </div>
+              </div>
+            </li>
+            {% endfor %}
+            </ul>
+
+          </div>
+          {% endif %}
+          {% for mainfolder in context.master.folders %}
           <div class="folder-wrapper">
             <div class="folder">
               <a

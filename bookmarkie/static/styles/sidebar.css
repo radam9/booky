@@ -108,7 +108,7 @@ h5,
   color: #fff;
   display: block;
   padding: 10px 30px;
-  background: #61afef;
+  background: #04915c;
 }
 #sidebar ul.components {
   padding: 0;
@@ -130,11 +130,11 @@ h5,
 }
 #sidebar ul li a:hover {
   color: #fff;
-  background: #98c379;
-  border-bottom: 1px solid #98c379;
+  background: #7ab787;
+  border-bottom: 1px solid #7ab787;
 }
 #sidebar ul li.active > a {
-  background: #61afef;
+  background: #04915c;
   color: #fff;
 }
 #sidebar ul li.active > a:hover {
@@ -261,7 +261,9 @@ a[data-toggle="collapse"] {
 .subscribe-form .form-control {
   background: #4897fc;
 }
-
+#cat-main li .cat-folder {
+  padding: 7px 35px;
+}
 .category-wrapper {
   overflow-y: scroll;
   scrollbar-color: #abb2bf #282c34;

@@ -133,7 +133,7 @@ def main(bookmarks_file):
     heading = soup.find("h1")
     root = soup.find("dl")
     # Create root folder for bookmarks
-    root_folder = Directory(title="root", parent_id=None, position=0)
+    root_folder = Directory(title="root", parent_id=None)
     root_folder.insert()
     # Parse the root of the bookmarks tree
     if heading.text == "Bookmarks":
