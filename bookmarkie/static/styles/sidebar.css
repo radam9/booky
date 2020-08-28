@@ -233,8 +233,8 @@ a[data-toggle="collapse"] {
   color: #000;
   font-size: 13px;
   border-radius: 4px;
-  -webkit-box-shadow: none !important;
-  box-shadow: none !important;
+  /* -webkit-box-shadow: none !important;
+  box-shadow: none !important; */
   border: transparent;
 }
 .form-control:focus,

@@ -1,5 +1,6 @@
 from bs4 import BeautifulSoup
 from .models import Bookmark, Directory, Url
+from .get_favicon import get_favicon_iconuri
 from datetime import datetime
 
 
@@ -12,19 +13,18 @@ def parse_url(child, parent_id):
     Function that parses a url tag <DT><A>, creates a url and returns the ID
     """
     date_added = format_datetime(child.get("add_date"))
-    url = Url(
-        title=child.text,
-        url=child.get("href"),
-        parent_id=parent_id,
-        icon=child.get("icon"),
-        date_added=date_added,
-    )
-    ## still need to parse Icon and Icon_URI, or run a different function that gets the icon for the url.
+    href = child.get("href")
+    url = Url(title=child.text, url=href, parent_id=parent_id, date_added=date_added,)
 
-    # getting tags and icon_uri
+    # getting icon, icon_uri and tags
+    icon = child.get("icon")
     icon_uri = child.get("icon_uri")
-    if icon_uri:
+    if icon:
+        url.icon = icon
         url.icon_uri = icon_uri
+    else:
+        url.icon_uri, url.icon = get_favicon_iconuri(href)
+
     tags = child.get("tags")
     if tags:
         url.tags = tags.split(",")

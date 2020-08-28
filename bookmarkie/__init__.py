@@ -1,7 +1,7 @@
 import os
 from flask import Flask, request, abort, jsonify, render_template
 from flask_sqlalchemy import SQLAlchemy
-from .models import setup_db, Url, Directory
+from .models import setup_db, Url, Directory, Bookmark
 from werkzeug.exceptions import BadRequest
 from .get_favicon import get_favicon_iconuri
 
@@ -15,6 +15,7 @@ def check_query(result):
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__)
+    app.config["SECRET_KEY"] = "SuperAwsomeSecretKey"
     # Initialize the database
     setup_db(app)
 
@@ -23,6 +24,17 @@ def create_app(test_config=None):
     def index():
         root = Directory.query.get("1")
         return render_template("index.html", context={"root": root, "master": root})
+
+    # Route to return url/directory edit modal
+    @app.route("/modal_edit/<string:item_id>")
+    def modal_edit(item_id):
+        item = Bookmark.query.get(item_id)
+        return render_template("modal_edit.html", item=item)
+
+    @app.route("/modal_delete/<string:item_id>")
+    def modal_delete(item_id):
+        item = Bookmark.query.get(item_id)
+        return render_template("modal_delete.html", item=item)
 
     # Directory display route
     @app.route("/d/<int:dir_id>")
@@ -100,7 +112,7 @@ def create_app(test_config=None):
             title = body.get("title")
             url = body.get("url")
             parent_id = body.get("parent_id")
-            icon, icon_uri = get_favicon_iconuri(url)
+            icon_uri, icon = get_favicon_iconuri(url)
             # Create bookmark
             bookmark = Url(
                 title=title, url=url, parent_id=parent_id, icon=icon, icon_uri=icon_uri,

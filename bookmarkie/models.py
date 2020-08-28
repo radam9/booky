@@ -1,7 +1,7 @@
 import os
 from flask_sqlalchemy import SQLAlchemy
 import sqlalchemy
-from sqlalchemy.event import listens_for, listen
+from sqlalchemy.event import listens_for
 from sqlalchemy import Column, Integer, String, Date, DateTime, ForeignKey
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.ext.declarative import declarative_base
@@ -55,8 +55,8 @@ class Bookmark(Base, db.Model):
     parent_id = Column(Integer, ForeignKey("Bookmark.id"), nullable=True)
     parent = relationship(
         "Bookmark",
-        cascade="save-update, merge, delete",
-        backref="children",
+        cascade="save-update, merge",
+        backref=backref("children", cascade="all"),
         lazy=False,
         remote_side="Bookmark.id",
     )

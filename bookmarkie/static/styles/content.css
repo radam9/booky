@@ -7,7 +7,7 @@ a {
   color: black;
 }
 a :hover {
-  color: white;
+  color: black;
 }
 ul {
   margin: 0;
@@ -120,7 +120,73 @@ li > div > a {
   vertical-align: middle;
   margin-top: -10px;
   margin-bottom: -6px;
+  max-width: 16px;
 }
 .category {
   color: #fff;
+}
+
+/* Modal Window */
+.mymodal {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  visibility: hidden;
+  transform: scale(1.1);
+  transition: visibility 0s linear 0.25s, opacity 0.25s 0s, transform 0.25s;
+}
+.mymodal-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 0.5rem;
+  background-color: #404040;
+  padding: 25px 24px;
+  width: 840px;
+  display: grid;
+  grid-template-columns: repeat(4, 190px);
+  grid-row-gap: 20px;
+  grid-column-gap: 10px;
+}
+
+.mymodal-input {
+  grid-column: 1/5;
+}
+.mymodal-title {
+  grid-column: 2/4;
+  color: #fff;
+  text-align: center;
+  margin: 0;
+}
+.mymodal-input-title,
+.mymodal-input-url {
+  font-size: 20px;
+}
+#h5-1,
+#h5-2 {
+  grid-column: 1/5;
+  color: #fff;
+  justify-self: center;
+}
+.btn-cancel {
+  grid-column: 2/3;
+}
+.btn-confirm {
+  grid-column: 3/4;
+}
+.btn-cancel,
+.btn-confirm {
+  width: 50%;
+  justify-self: center;
+}
+.show-mymodal {
+  opacity: 1;
+  visibility: visible;
+  transform: scale(1);
+  transition: visibility 0s linear 0s, opacity 0.25s 0s, transform 0.25s;
 }

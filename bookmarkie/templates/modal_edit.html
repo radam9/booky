@@ -1,0 +1,35 @@
+<div class="mymodal-content">
+  <h4 class="mymodal-title">Edit Bookmark</h4>
+  <div class="input-group mymodal-input">
+    <div class="input-group-prepend">
+      <span class="input-group-text" id="inputGroup-sizing-default">Title</span>
+    </div>
+    <input
+      type="text"
+      class="form-control mymodal-input-title"
+      value="{{ item.title }}"
+    />
+  </div>
+  {% if item.type == "Url" %}
+  <div class="input-group mymodal-input">
+    <div class="input-group-prepend">
+      <span class="input-group-text" id="inputGroup-sizing-default">Url</span>
+    </div>
+    <input
+      type="text"
+      class="form-control mymodal-input-url"
+      value="{{ item.url }}"
+    />
+  </div>
+  {% endif %}
+  <button type="button" class="btn-cancel btn btn-outline-danger">
+    Cancel
+  </button>
+  <button
+    type="button"
+    class="btn-confirm btn btn-outline-success"
+    id="{{ item.type }}"
+  >
+    Save
+  </button>
+</div>

@@ -44,8 +44,8 @@
                 }}
               </a>
               <div class="modify-buttons">
-                <i class="fas edit fa-pen" id="{{ context.master.id }}"></i>
-                <i class="fas delete fa-times" id="{{ context.master.id }}"></i>
+                <i class="fas edit fa-pen" id="edit-{{ context.master.id }}"></i>
+                <i class="fas delete fa-times" id="delete-{{ context.master.id }}"></i>
               </div>
             </div>
             <ul
@@ -67,8 +67,8 @@
                 >
                   {% endif %}
                 <div class="modify-buttons">
-                  <i class="fas edit fa-pen" id="{{ link.id }}"></i>
-                  <i class="fas delete fa-times" id="{{ link.id }}"></i>
+                  <i class="fas edit fa-pen" id="edit-{{ link.id }}"></i>
+                  <i class="fas delete fa-times" id="delete-{{ link.id }}"></i>
                 </div>
               </div>
             </li>
@@ -88,8 +88,8 @@
                 }}
               </a>
               <div class="modify-buttons">
-                <i class="fas edit fa-pen" id="{{ mainfolder.id }}"></i>
-                <i class="fas delete fa-times" id="{{ mainfolder.id }}"></i>
+                <i class="fas edit fa-pen" id="edit-{{ mainfolder.id }}"></i>
+                <i class="fas delete fa-times" id="delete-{{ mainfolder.id }}"></i>
               </div>
             </div>
             <ul
@@ -112,8 +112,8 @@
                   >
                     {% endif %}
                   <div class="modify-buttons">
-                    <i class="fas edit fa-pen" id="{{ item.id }}"></i>
-                    <i class="fas delete fa-times" id="{{ item.id }}"></i>
+                    <i class="fas edit fa-pen" id="edit-{{ item.id }}"></i>
+                    <i class="fas delete fa-times" id="delete-{{ item.id }}"></i>
                   </div>
                 </div>
               </li>
@@ -127,8 +127,8 @@
                   <i class="fas folder-logo fa-caret-right"></i>{{ item.title }}
                 </a>
                 <div class="modify-buttons">
-                  <i class="fas edit fa-pen" id="{{ item.id }}"></i>
-                  <i class="fas delete fa-times" id="{{ item.id }}"></i>
+                  <i class="fas edit fa-pen" id="edit-{{ item.id }}"></i>
+                  <i class="fas delete fa-times" id="delete-{{ item.id }}"></i>
                 </div>
               </div>
               <ul class="subfolder-list collapse" id="subfolder_{{ item.id }}">
