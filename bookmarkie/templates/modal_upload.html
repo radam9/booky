@@ -1,0 +1,25 @@
+<div class="mymodal-content">
+  <h4 class="mymodal-title">Upload Bookmarks File</h4>
+  <form action="/upload_bookmark" method="POST" enctype="multipart/form-data">
+    <div class="form-group mymodal-input">
+      <label>Select bookmark file</label>
+      <div class="custom-file">
+        <input
+          type="file"
+          class="custom-file-input mymodal-input-title"
+          name="the_bookmark"
+          id="the_bookmark"
+        />
+        <label class="custom-file-label" for="the_bookmark"
+          >Select bookmark file...</label
+        >
+      </div>
+    </div>
+    <button type="button" class="btn-cancel btn btn-outline-danger">
+      Cancel
+    </button>
+    <button type="submit" class="btn-confirm btn btn-outline-success">
+      Upload
+    </button>
+  </form>
+</div>

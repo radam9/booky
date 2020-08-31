@@ -22,6 +22,10 @@
     <!-- stylesheets -->
     <link
       rel="stylesheet"
+      href="{{ url_for('static', filename='styles/BSmod.css') }}"
+    />
+    <link
+      rel="stylesheet"
       href="{{ url_for('static', filename='styles/sidebar.css') }}"
     />
     <link
@@ -54,6 +58,13 @@
       integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
       crossorigin="anonymous"
     ></script>
-    {% block script %}{% endblock %}
+    <script
+      type="text/javascript"
+      src="{{ url_for('static', filename='scripts/sidebar.js') }}"
+    ></script>
+    <script
+      type="text/javascript"
+      src="{{ url_for('static', filename='scripts/content.js') }}"
+    ></script>
   </body>
 </html>

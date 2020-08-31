@@ -4,23 +4,23 @@
     <div class="wrapper d-flex align-items-stretch">
       <nav id="sidebar">
         <div class="custom-menu">
-          <button type="button" id="sidebarCollapse" class="btn btn-secondary">
+          <button type="button" id="sidebarCollapse" class="btn btn-outline-success">
             <i class="fas fa-bars"></i>
             <span class="sr-only">Toggle Menu</span>
           </button>
         </div>
         <div class="category-wrapper">
-          <h1><a href="{{ url_for('index') }}" class="logo">Categories</a></h1>
+          <h1><a href="{{ url_for('index', _external=True) }}" class="logo">Categories</a></h1>
           <ul class="list-unstyled components mb-5">
             {% for main in context.root.children %}
               {% if main.type == "Directory" %}
-            <li class="active"><a class="cat-folder" href="{{ url_for('display_directory', dir_id=main.id) }}">{{ main.title }}</a></li>
+            <li><a class="cat-folder" href="{{ url_for('display_directory', dir_id=main.id, _external=True) }}">{{ main.title }}</a></li>
               {% endif %}
               {% if main.children %}
             <ul id="cat-main">
                 {% for item in main.children %}
                   {% if item.type == "Directory" %}
-              <li><a class="cat-folder" href="{{ url_for('display_directory', dir_id=item.id) }}">{{ item.title }}</a></li>
+              <li><a class="cat-folder" href="{{ url_for('display_directory', dir_id=item.id, _external=True) }}">{{ item.title }}</a></li>
                   {% endif %}
                 {% endfor %}
             </ul>
@@ -30,8 +30,20 @@
         </div>
       </nav>
       <!-- Page Content  -->
-      <div id="content" class="p-4 p-md-5 pt-5">
-        <h2 class="mb-4 category">{{ context.master.title }}</h2>
+      <div id="content">
+        <div id="content-header">
+          <button id="add_bookmark" class="btn btn-outline-success">Add Bookmark</button>
+          <button id="add_directory" class="btn btn-outline-success">Add Directory</button>
+          <div class="dropdown" id="export">
+            <button class="btn btn-outline-success dropdown-toggle" type="button" id="export_button" data-toggle="dropdown">Export</button>
+            <div class="dropdown-menu">
+              <a class="dropdown-item" href="{{ url_for('download_bookmark', filetype='HTML') }}">to HTML</a>
+              <a class="dropdown-item" href="{{ url_for('download_bookmark', filetype='JSON') }}">to JSON</a>
+            </div>
+          </div>
+          <button id="clear_database" class="btn btn-outline-danger">Clear Data</button>
+          <h2 class="category">{{ context.master.title }}</h2>
+        </div>
         <div class="main">
           {% if context.master.links|length > 0 %}
           <div class="folder-wrapper">
@@ -141,14 +153,4 @@
         </div>
       </div>
     </div>
-    {% endblock %}
-    {% block script %}
-    <script
-      type="text/javascript"
-      src="{{ url_for('static', filename='scripts/sidebar.js') }}"
-    ></script>
-    <script
-      type="text/javascript"
-      src="{{ url_for('static', filename='scripts/content.js') }}"
-    ></script>
     {% endblock %}

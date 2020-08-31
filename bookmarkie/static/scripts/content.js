@@ -1,3 +1,10 @@
+// set the active highlight on the category list
+if (window.location.pathname != "/") {
+  const current_path = window.location.href;
+  const active = document.querySelector("a[href='" + current_path + "']");
+  active.parentElement.classList.toggle("active");
+}
+
 // event listener to change the orientation of the arrow beside folders when pressed
 const sort = document.querySelectorAll(".folder-title,.subfolder-title");
 for (let i = 0; i < sort.length; i++) {
@@ -11,10 +18,15 @@ for (let i = 0; i < sort.length; i++) {
   });
 }
 
-// event listener for edit and delete button (modal window)
+// event listener for edit, delete, add bookmark, add directory and Clear Data buttons (modal window)
 const modal = document.getElementById("modal");
 const edits = document.querySelectorAll(".edit");
 const deletes = document.querySelectorAll(".delete");
+const add_bookmark = document.getElementById("add_bookmark");
+const add_directory = document.getElementById("add_directory");
+const import_file = document.getElementById("import");
+const export_file = document.querySelectorAll("export");
+const clear_data = document.getElementById("clear_database");
 
 function handleErrors(response) {
   if (!response.ok) {
@@ -29,6 +41,21 @@ function toggleModal() {
 function removeModal() {
   toggleModal();
   modal.innerHTML = "";
+}
+
+if (import_file) {
+  import_file.addEventListener("click", () => {
+    fetch("/upload_bookmark")
+      .then(handleErrors)
+      .then((response) => response.text())
+      .then((data) => {
+        modal.innerHTML += data;
+        toggleModal();
+        const cancel = modal.getElementsByClassName("btn-cancel")[0];
+        const confirm = modal.getElementsByClassName("btn-confirm")[0];
+        cancel.addEventListener("click", removeModal);
+      });
+  });
 }
 
 for (let i = 0; i < edits.length; i++) {
@@ -115,3 +142,97 @@ for (let i = 0; i < deletes.length; i++) {
       });
   });
 }
+
+add_bookmark.addEventListener("click", () => {
+  fetch("/modal_create/Url")
+    .then(handleErrors)
+    .then((response) => response.text())
+    .then((data) => {
+      modal.innerHTML += data;
+      toggleModal();
+      const cancel = modal.getElementsByClassName("btn-cancel")[0];
+      const confirm = modal.getElementsByClassName("btn-confirm")[0];
+      cancel.addEventListener("click", removeModal);
+      confirm.addEventListener("click", () => {
+        let title = modal.getElementsByClassName("mymodal-input-title")[0]
+          .value;
+        let url = modal.getElementsByClassName("mymodal-input-url")[0].value;
+        let dir_value = modal.getElementsByClassName("mymodal-input-dir")[0]
+          .value;
+        let dir = document
+          .getElementById("dir-list")
+          .options[dir_value].getAttribute("data-id");
+        let bookmark = { title: title, url: url, parent_id: dir };
+        fetch("/bookmarks/create", {
+          method: "POST",
+          credentials: "include",
+          body: JSON.stringify(bookmark),
+          cache: "no-cache",
+          headers: new Headers({
+            "content-type": "application/json",
+          }),
+        })
+          .then(handleErrors)
+          .then(() => {
+            location.reload(true);
+          });
+      });
+    });
+});
+add_directory.addEventListener("click", () => {
+  fetch("/modal_create/Directory")
+    .then(handleErrors)
+    .then((response) => response.text())
+    .then((data) => {
+      modal.innerHTML += data;
+      toggleModal();
+      const cancel = modal.getElementsByClassName("btn-cancel")[0];
+      const confirm = modal.getElementsByClassName("btn-confirm")[0];
+      cancel.addEventListener("click", removeModal);
+      confirm.addEventListener("click", () => {
+        let title = modal.getElementsByClassName("mymodal-input-title")[0]
+          .value;
+        let dir_value = modal.getElementsByClassName("mymodal-input-dir")[0]
+          .value;
+        let dir = document
+          .getElementById("dir-list")
+          .options[dir_value].getAttribute("data-id");
+        let bookmark = { title: title, parent_id: dir };
+        fetch("/directories/create", {
+          method: "POST",
+          credentials: "include",
+          body: JSON.stringify(bookmark),
+          cache: "no-cache",
+          headers: new Headers({
+            "content-type": "application/json",
+          }),
+        })
+          .then(handleErrors)
+          .then(() => {
+            location.reload(true);
+          });
+      });
+    });
+});
+
+// for (let i = 0; i < deletes.length; i++) {
+//   export_file[i].addEventListener("click", (e) => {
+//     let e.target.
+//   })
+// }
+
+clear_data.addEventListener("click", () => {
+  fetch("/modal_delete/Database")
+    .then(handleErrors)
+    .then((response) => response.text())
+    .then((data) => {
+      modal.innerHTML += data;
+      toggleModal();
+      const cancel = modal.getElementsByClassName("btn-cancel")[0];
+      const confirm = modal.getElementsByClassName("btn-confirm")[0];
+      cancel.addEventListener("click", removeModal);
+      confirm.addEventListener("click", () => {
+        window.location.pathname = "/drop_database";
+      });
+    });
+});

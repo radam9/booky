@@ -1,0 +1,24 @@
+{% extends 'base.html' %} {% block body %}
+<div class="wrapper d-flex align-items-stretch">
+  <nav id="sidebar">
+    <div class="custom-menu">
+      <button type="button" id="sidebarCollapse" class="btn btn-secondary">
+        <i class="fas fa-bars"></i>
+        <span class="sr-only">Toggle Menu</span>
+      </button>
+    </div>
+    <div class="category-wrapper">
+      <h1><a href="{{ url_for('index') }}" class="logo">Categories</a></h1>
+    </div>
+  </nav>
+  <!-- Page Content  -->
+  <div id="content">
+    <div id="content-header">
+      <button id="import" class="btn btn-outline-success">Import</button>
+      <h2 class="category" style="grid-row: 1/2; grid-column: 2/6">
+        Welcome to Bookmarkie! Import your Bookmarks.
+      </h2>
+    </div>
+  </div>
+</div>
+{% endblock %}

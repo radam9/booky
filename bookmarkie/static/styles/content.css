@@ -47,8 +47,54 @@ li > div > a {
   display: flex;
   flex-wrap: wrap;
 } */
+#content {
+  margin: 50px 0 0 25px;
+  display: grid;
+  grid-template-rows: 140px auto;
+  grid-gap: 20px;
+}
+
+#content-header {
+  grid-row: 1/2;
+  display: grid;
+  grid-template-columns: repeat(4, auto);
+  grid-template-rows: repeat(2, 60px);
+  grid-gap: 20px;
+}
+#add_bookmark,
+#add_directory,
+#import,
+#export,
+#clear_database {
+  justify-self: center;
+  width: 145px;
+  margin: 10px;
+}
+#add_bookmark {
+  grid-column: 1/2;
+}
+#add_directory {
+  grid-column: 2/3;
+}
+#export {
+  grid-column: 3/4;
+}
+#clear_database {
+  grid-column: 4/5;
+}
+
+#export_button {
+  width: 100%;
+}
+.category {
+  color: #fff;
+  grid-row: 2/3;
+  grid-column: 1/5;
+  margin: 0;
+}
 
 .main {
+  grid-row: 2/3;
   columns: auto 450px;
   column-gap: 15px;
 }
@@ -122,9 +168,6 @@ li > div > a {
   margin-bottom: -6px;
   max-width: 16px;
 }
-.category {
-  color: #fff;
-}
 
 /* Modal Window */
 .mymodal {
@@ -164,7 +207,8 @@ li > div > a {
   margin: 0;
 }
 .mymodal-input-title,
-.mymodal-input-url {
+.mymodal-input-url,
+.mymodal-input-dir {
   font-size: 20px;
 }
 #h5-1,
