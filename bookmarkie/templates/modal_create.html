@@ -1,8 +1,8 @@
 <div class="mymodal-content">
-  {% if context.type == "Url" %}
+  {% if context.type == "url" %}
   <h4 class="mymodal-title">Create Url</h4>
   {% else %}
-  <h4 class="mymodal-title">Create Directory</h4>
+  <h4 class="mymodal-title">Create Folder</h4>
   {% endif %}
   <div class="input-group mymodal-input">
     <div class="input-group-prepend">
@@ -10,7 +10,7 @@
     </div>
     <input type="text" class="form-control mymodal-input-title" value="" />
   </div>
-  {% if context.type == "Url" %}
+  {% if context.type == "url" %}
   <div class="input-group mymodal-input">
     <div class="input-group-prepend">
       <span class="input-group-text" id="inputGroup-sizing-default">Url</span>
@@ -43,7 +43,7 @@
   </button>
 </div>
 <datalist id="dir-list" class="dir-list">
-  {% for dir in context.directories %}
+  {% for dir in context.folders %}
   <option
     name="{{ dir.path }}"
     value="{{ dir.path }}"

@@ -1,11 +1,19 @@
-import os
-from flask_sqlalchemy import SQLAlchemy
 import sqlalchemy
-from sqlalchemy.event import listens_for
-from sqlalchemy import Column, Integer, String, Date, DateTime, ForeignKey
-from sqlalchemy.orm import relationship, backref
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.event import listen, listens_for, remove
+from sqlalchemy import (
+    create_engine,
+    Column,
+    Integer,
+    String,
+    Date,
+    DateTime,
+    ForeignKey,
+)
+from sqlalchemy.orm import sessionmaker, relationship, backref
 from sqlalchemy.ext.declarative import declarative_base
-from datetime import datetime
+import time
+import os
 
 # Set up database info
 database_filename = "bookmarkie.db"
@@ -13,7 +21,6 @@ project_dir = os.path.dirname(os.path.abspath(__file__))
 database_path = "sqlite:///{}".format(os.path.join(project_dir, database_filename))
 
 db = SQLAlchemy()
-
 
 # bind the flask appication and the SQLAlchemy service
 def setup_db(app, database_path=database_path):
@@ -27,32 +34,32 @@ Base = declarative_base()
 
 # Models
 class Bookmark(Base, db.Model):
-    """Base model for the Url and Directory model.
+    """Base model for the Url and Folder model.
     (used to Single Table Inheritence)
     ...
     Attributes
     ----------
     id : int
-        id of the bookmark (url/directory)
+        id of the bookmark (url/folder)
     title : str
-        title of bookmark (url/directory)
+        title of bookmark (url/folder)
     date_added : datetime
-        date bookmark (url/directory) was added on
-    position : int
-        current position to remember order of bookmark (url/directory) in directory
+        date bookmark (url/folder) was added on
+    index : int
+        current index to remember order of bookmark (url/folder) in folder
     parent_id : int
-        id of the directory the bookmark (url/directory) is contained in
+        id of the folder the bookmark (url/folder) is contained in
     parent : relation
-        Many to One relation for the Directory, containing the bookmarks (url/directory)
+        Many to One relation for the Folder, containing the bookmarks (url/folder)
     """
 
-    __tablename__ = "Bookmark"
+    __tablename__ = "bookmark"
 
     id = Column(Integer, primary_key=True)
-    title = Column(String(256))
-    date_added = Column(DateTime, nullable=False, default=datetime.utcnow)
-    position = Column(Integer)
-    parent_id = Column(Integer, ForeignKey("Bookmark.id"), nullable=True)
+    title = Column(String)
+    date_added = Column(Integer, nullable=False, default=time.time())
+    index = Column(Integer)
+    parent_id = Column(Integer, ForeignKey("bookmark.id"), nullable=True)
     parent = relationship(
         "Bookmark",
         cascade="save-update, merge",
@@ -62,7 +69,7 @@ class Bookmark(Base, db.Model):
     )
     type = Column(String)
 
-    __mapper_args__ = {"polymorphic_on": type, "polymorphic_identity": "Bookmark"}
+    __mapper_args__ = {"polymorphic_on": type, "polymorphic_identity": "bookmark"}
 
     def insert(self):
         db.session.add(self)
@@ -74,6 +81,9 @@ class Bookmark(Base, db.Model):
     def delete(self):
         db.session.delete(self)
         db.session.commit()
+
+    def get(self, attr):
+        return self.__getattribute__(attr)
 
 
 class Url(Bookmark):
@@ -95,33 +105,38 @@ class Url(Bookmark):
         html icon_uri found in firefox bookmarks
     tags : str
         tags describing url
-    position : int
-        current position to remember order of urls in directory
+    index : int
+        current index to remember order of urls in folder
     parent_id : int
-        id of the directory the url is contained in"""
+        id of the folder the url is contained in"""
 
-    url = Column(String(500))
+    url = Column(String)
     icon = Column(String)
     icon_uri = Column(String)
-    tags = Column(String(500))
+    tags = Column(String)
 
-    __mapper_args__ = {"polymorphic_identity": "Url"}
+    __mapper_args__ = {"polymorphic_identity": "url"}
 
     def __init__(
         self,
         title,
         url,
         parent_id,
+        index=None,
+        _id=None,
         date_added=None,
         icon=None,
         icon_uri=None,
         tags=None,
     ):
+        if _id:
+            self.id = _id
         if title == None:
             self.title = url
         else:
             self.title = title
         self.url = url
+        self.index = index
         self.date_added = date_added
         self.icon = icon
         self.icon_uri = icon_uri
@@ -131,71 +146,45 @@ class Url(Bookmark):
     def __repr__(self):
         return f"{self.title} (id: {self.id}) -in- {self.parent}"
 
-    def serialize(self):
-        return {
-            "id": self.id,
-            "title": self.title,
-            "url": self.url,
-            "date_added": self.date_added,
-            "icon": self.icon,
-            "icon_uri": self.icon_uri,
-            "tags": self.tags,
-            "position": self.position,
-            "parent_id": self.parent_id,
-        }
 
-    @staticmethod
-    def serialize_list(bookmarks):
-        return [b.serialize() for b in bookmarks]
-
-
-class Directory(Bookmark):
-    """ Model representing bookmark directories
+class Folder(Bookmark):
+    """ Model representing bookmark folders
     ...
     Attributes
     ----------
     id : int
-        id of the directory
+        id of the folder
     title : str
-        name of the directory
+        name of the folder
     date_added : datetime
-        date directory was added on
+        date folder was added on
     parent_id : int
-        id of parent directory
-    position : int
-        current position in parent directory
+        id of parent folder
+    index : int
+        current index in parent folder
     urls : db relationship
-        urls contained in the directory"""
+        urls contained in the folder"""
 
-    __mapper_args__ = {"polymorphic_identity": "Directory"}
+    __mapper_args__ = {"polymorphic_identity": "folder"}
 
-    def __init__(self, title, parent_id, date_added=None):
+    def __init__(self, title, parent_id, index=None, _id=None, date_added=None):
+        if _id:
+            self.id = _id
         self.title = title
+        self.index = index
         self.date_added = date_added
         self.parent_id = parent_id
 
     def __repr__(self):
         return f"{self.title} (id: {self.id})"
 
-    def serialize(self):
-        return {
-            "id": self.id,
-            "title": self.title,
-            "parent_id": self.parent_id,
-            "date_added": self.date_added,
-            "position": self.position,
-            "children": [b.serialize() for b in self.children],
-        }
-
-    @staticmethod
-    def serialize_list(result):
-        return [d.serialize() for d in result]
-
 
 # Event listener that will index Bookmarks before inserting them.
-@listens_for(Bookmark, "before_insert", propagate=True)
+# @listens_for(Bookmark, "before_insert", propagate=True)
 def indexer(mapper, connect, self):
     if self.parent_id:
-        position = len(Directory.query.get(self.parent_id).children)
-        self.position = position
+        index = len(Folder.query.get(self.parent_id).children)
+        self.index = index
 
+
+listen(Bookmark, "before_insert", indexer, propagate=True)

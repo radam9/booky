@@ -10,12 +10,12 @@ from flask import (
     send_from_directory,
 )
 from flask_sqlalchemy import SQLAlchemy
-from .models import setup_db, Url, Directory, Bookmark
+from .models import setup_db, Url, Folder, Bookmark
 from werkzeug.exceptions import BadRequest
 from werkzeug.utils import secure_filename
 from .get_favicon import get_favicon_iconuri
 from sqlalchemy.exc import OperationalError
-from . import bookmarks_parser
+from . import bookmarks_parser as BP
 
 # Raise error if no query results
 def check_query(result):
@@ -38,39 +38,37 @@ def create_app(test_config=None):
     @app.route("/")
     def index():
         try:
-            root = Directory.query.get("1")
+            root = Folder.query.get(1)
             return render_template("index.html", context={"root": root, "master": root})
         except OperationalError:
             return render_template("index_empty.html")
 
-    # Route to return url/directory edit modal
-    @app.route("/modal_edit/<string:item_id>")
+    # Route to return url/folder edit modal
+    @app.route("/modal_edit/<int:item_id>")
     def modal_edit(item_id):
         item = Bookmark.query.get(item_id)
         return render_template("modal_edit.html", item=item)
 
-    # Route to return url/directory/database delete modal
+    # Route to return url/folder/database delete modal
     @app.route("/modal_delete/<string:item_id>")
     def modal_delete(item_id):
         if item_id == "Database":
             return render_template("modal_delete.html", item="Database")
-        item = Bookmark.query.get(item_id)
+        item = Bookmark.query.get(str(item_id))
         return render_template("modal_delete.html", item=item)
 
-    # Route to return url/directory create modal
+    # Route to return url/folder create modal
     @app.route("/modal_create/<string:bk_type>")
     def modal_create(bk_type):
-        directories = (
-            Directory.query.filter_by(type="Directory").order_by(Directory.id).all()
-        )
-        for d in directories:
-            if d.parent_id == None:
-                d.path = "/" + d.title + "/"
+        folders = Folder.query.filter_by(type="folder").order_by(Folder.id).all()
+        for folder in folders:
+            if folder.parent_id == 0:
+                folder.path = "/" + folder.title + "/"
             else:
-                d.path = d.parent.path + d.title + "/"
-        directories.sort(key=lambda x: x.path)
+                folder.path = folder.parent.path + folder.title + "/"
+        folders.sort(key=lambda x: x.path)
         return render_template(
-            "modal_create.html", context={"directories": directories, "type": bk_type}
+            "modal_create.html", context={"folders": folders, "type": bk_type}
         )
 
     # Route to delete entire database
@@ -89,40 +87,62 @@ def create_app(test_config=None):
                 bookmark_file = request.files["the_bookmark"]
                 filename = secure_filename(bookmark_file.filename)
                 file_path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
+                extension = os.path.splitext(file_path)[-1]
                 bookmark_file.save(file_path)
                 Bookmark.__table__.create(db.engine)
-                bookmarks_parser.main(file_path)
+                if extension == ".html":
+                    bookmarks = BP.BookmarksParserHTML(file_path)
+                    bookmarks.convert_to_db()
+                    bookmarks.save_to_db()
+                elif extension == ".json":
+                    bookmarks = BP.BookmarksParserJSON(file_path)
+                    bookmarks.convert_to_db()
+                    bookmarks.save_to_db()
                 os.remove(file_path)
             return redirect(url_for("index"))
 
     # Route to download Bookmarks file
     @app.route("/download_bookmark/<string:filetype>")
     def download_bookmark(filetype):
-        filename = "HTML Filename" if filetype == "HTML" else "JSON Filename"
+        database_path = app.root_path + "/bookmarkie.db"
+        if filetype == "HTML":
+            bookmarks = BP.BookmarksParserDB(database_path)
+            bookmarks.convert_to_html()
+            bookmarks.save_to_html()
+            filename = "bookmarkie.html"
+        elif filetype == "JSON":
+            bookmarks = BP.BookmarksParserDB(database_path)
+            bookmarks.convert_to_json()
+            bookmarks.save_to_json()
+            filename = "bookmarkie.json"
+
         return send_from_directory(
             app.config["DOWNLOAD_FOLDER"], filename=filename, as_attachment=True,
         )
 
-    # Route to display selected directory
+    # Route to display selected folder
     @app.route("/d/<int:dir_id>")
-    def display_directory(dir_id):
-        root = Directory.query.get("1")
-        directory = Directory.query.get(str(dir_id))
-        master = {
-            "title": directory.title,
-            "id": directory.id,
-            "links": [],
-            "folders": [],
-        }
-        for bookmark in directory.children:
-            if bookmark.type == "Url":
-                master["links"].append(bookmark)
-            elif bookmark.type == "Directory":
-                master["folders"].append(bookmark)
+    def display_folder(dir_id):
+        try:
+            root = Folder.query.get(1)
+            folder = Folder.query.get(dir_id)
+            master = {
+                "title": folder.title,
+                "id": folder.id,
+                "links": [],
+                "folders": [],
+            }
+            for bookmark in folder.children:
+                if bookmark.type == "url":
+                    master["links"].append(bookmark)
+                elif bookmark.type == "folder":
+                    master["folders"].append(bookmark)
 
-        return render_template(
-            "display_directory.html", context={"root": root, "master": master}
-        )
+            return render_template(
+                "display_folder.html", context={"root": root, "master": master}
+            )
+        except OperationalError:
+            return redirect(url_for("index"))
 
     # Route to get all bookmarks
     @app.route("/bookmarks")
@@ -138,26 +158,26 @@ def create_app(test_config=None):
 
         return jsonify({"bookmarks": bookmarks}), 200
 
-    # Route to get all directories
-    @app.route("/directories")
-    def get_directories():
-        # Get all directories
-        result = Directory.query.all()
+    # Route to get all folders
+    @app.route("/folders")
+    def get_folders():
+        # Get all folders
+        result = Folder.query.all()
 
-        # Raise 404 if no directories found
+        # Raise 404 if no folders found
         check_query(result)
 
-        # Format the directories
-        directories = Directory.serialize_list(result)
+        # Format the folders
+        folders = Folder.serialize_list(result)
 
-        return jsonify({"directories": directories}), 200
+        return jsonify({"folders": folders}), 200
 
-    # Route to get all bookmarks in a given directory id
-    @app.route("/directories/<int:id>")
-    def get_bookmarks_by_directory(id):
+    # Route to get all bookmarks in a given folder id
+    @app.route("/folders/<int:id>")
+    def get_bookmarks_by_folder(id):
         try:
-            # Get all bookmarks in directory with given id
-            result = Directory.query.get(id).urls
+            # Get all bookmarks in folder with given id
+            result = Folder.query.get(id).urls
 
             # Raise 404 if not bookmarks found
             check_query(result)
@@ -201,23 +221,23 @@ def create_app(test_config=None):
         except Exception:
             abort(422)
 
-    # Route to create a directory
-    @app.route("/directories/create", methods=["POST"])
-    def create_directory():
-        # Attempt to create a directory
+    # Route to create a folder
+    @app.route("/folders/create", methods=["POST"])
+    def create_folder():
+        # Attempt to create a folder
         try:
             # Get request body
             body = request.get_json()
             title = body.get("title")
-            parent_id = str(body.get("parent_id"))
-            # Create directory
-            directory = Directory(title=title, parent_id=parent_id)
-            directory.insert()
+            parent_id = body.get("parent_id")
+            # Create folder
+            folder = Folder(title=title, parent_id=parent_id)
+            folder.insert()
             return (
                 jsonify(
                     {
                         "Success": True,
-                        "Message": f"The Directory ({directory.title} was created successfully!)",
+                        "Message": f"The Folder ({folder.title} was created successfully!)",
                     }
                 ),
                 200,
@@ -266,16 +286,16 @@ def create_app(test_config=None):
         except Exception:
             abort(422)
 
-    # Route to modify a directory
-    @app.route("/directories/<int:id>/modify", methods=["PATCH"])
-    def modify_directory(id):
-        # Get the directory to modify
-        directory = Directory.query.get(id)
+    # Route to modify a folder
+    @app.route("/folders/<int:id>/modify", methods=["PATCH"])
+    def modify_folder(id):
+        # Get the folder to modify
+        folder = Folder.query.get(id)
 
-        # Raise 404 if directory doesn't exit
-        check_query(directory)
+        # Raise 404 if folder doesn't exit
+        check_query(folder)
 
-        # Attempt to modify the directory
+        # Attempt to modify the folder
         try:
             # Get request body
             body = request.get_json()
@@ -284,14 +304,14 @@ def create_app(test_config=None):
             for attr in attrs:
                 value = body.get(attr)
                 if value:
-                    # Modify directory if attr exists
-                    setattr(directory, attr, value)
-            directory.update()
+                    # Modify folder if attr exists
+                    setattr(folder, attr, value)
+            folder.update()
             return (
                 jsonify(
                     {
                         "Success": True,
-                        "Message": f"The directory ({directory.title}) was modified successfully!",
+                        "Message": f"The folder ({folder.title}) was modified successfully!",
                     }
                 ),
                 200,
@@ -326,21 +346,21 @@ def create_app(test_config=None):
         except Exception:
             abort(422)
 
-    # Route to delete a directory
-    @app.route("/directories/<int:id>/delete", methods=["DELETE"])
-    def delete_directory(id):
-        # Get the directory to delete
-        directory = Directory.query.get(id)
-        # Raise 404 if directory doesn't exit
-        check_query(directory)
-        # Attempt to delete directory
+    # Route to delete a folder
+    @app.route("/folders/<int:id>/delete", methods=["DELETE"])
+    def delete_folder(id):
+        # Get the folder to delete
+        folder = Folder.query.get(id)
+        # Raise 404 if folder doesn't exit
+        check_query(folder)
+        # Attempt to delete folder
         try:
-            directory.delete()
+            folder.delete()
             return (
                 jsonify(
                     {
                         "Success": True,
-                        "Message": f"The Directory ({directory.title}) was deleted successfully!",
+                        "Message": f"The Folder ({folder.title}) was deleted successfully!",
                     }
                 ),
                 200,

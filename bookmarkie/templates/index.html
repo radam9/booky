@@ -13,14 +13,14 @@
           <h1><a href="{{ url_for('index') }}" class="logo">Categories</a></h1>
           <ul class="list-unstyled components mb-5">
             {% for main in context.root.children %}
-              {% if main.type == "Directory" %}
-            <li><a class="cat-folder" href="{{ url_for('display_directory', dir_id=main.id, _external=True) }}">{{ main.title }}</a></li>
+              {% if main.type == "folder" %}
+            <li><a class="cat-folder" href="{{ url_for('display_folder', dir_id=main.id, _external=True) }}">{{ main.title }}</a></li>
               {% endif %}
               {% if main.children %}
             <ul id="cat-main">
                 {% for item in main.children %}
-                  {% if item.type == "Directory" %}
-              <li><a class="cat-folder" href="{{ url_for('display_directory', dir_id=item.id, _external=True) }}">{{ item.title }}</a></li>
+                  {% if item.type == "folder" %}
+              <li><a class="cat-folder" href="{{ url_for('display_folder', dir_id=item.id, _external=True) }}">{{ item.title }}</a></li>
                   {% endif %}
                 {% endfor %}
             </ul>
@@ -33,7 +33,7 @@
       <div id="content">
         <div id="content-header">
           <button id="add_bookmark" class="btn btn-outline-success">Add Bookmark</button>
-          <button id="add_directory" class="btn btn-outline-success">Add Directory</button>
+          <button id="add_folder" class="btn btn-outline-success">Add Folder</button>
           <div class="dropdown" id="export">
             <button class="btn btn-outline-success dropdown-toggle" type="button" id="export_button" data-toggle="dropdown">Export</button>
             <div class="dropdown-menu">
@@ -65,7 +65,7 @@
               id="mainfolder_{{ mainfolder.id }}"
             >
               {% for item in mainfolder.children recursive %} {% if item.type ==
-              "Url" %}
+              "url" %}
               <li>
                 <div class="link">
                   <a href="{{ item.url }}" class="link-title"

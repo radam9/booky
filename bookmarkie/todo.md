@@ -1,6 +1,7 @@
 1. Main project to-do:
 
-   - Category list:
+   - [] check that the application is running after having renamed the `Directory` class to `Folder` (and all the related naming has been changed from `directory` to `folder`), and changed the `Bookmark` type name to lowercase.
+   - [/] Category list:
 
      - [x] Change highlight of selected category
      - [x] add bootstrap list
@@ -17,8 +18,8 @@
 - [x] Alert when deleting folder/link
 - [x] Javascript API/Route (maybe with modal) to add new folder/category/bookmark
 - [x] Javascript API/Route (with modal) to import (and parse) bookmarks (HTML)
-- [] Javascript API/Route (with modal) to import (and parse) bookmarks (JSON)
-- [/] Route to export Bookmarks as JSON/HTML (still needs a script to parse the database items and output json/html file)
+- [x] Javascript API/Route (with modal) to import (and parse) bookmarks (JSON)
+- [x] Route to export Bookmarks as JSON/HTML
 - [x] Javascript API/Route (modal) clear database (with warning alert/modal)
 - [] Select multiple links/folders
 - [] Javascript to drag and drop items to different folders and have the move reflected on the database
@@ -26,20 +27,39 @@
 - [] maybe add functionality to re-allocate folders/subfolders (if drag and drop doesn't work)
 - [x] Change color of bootstrap Success/Danger colors.
 - [x] get favicon.ico
+- [] make sure correct file is provided for import in "/upload_bookmark" route, if not raise error
+- [] fix location of import/export file conversion and filename
 - [] Unittest for entire APP
 - [] Documentation
 - [] Video Demonstration
 
 2. Create script to export:
    - [] Chrome standard HTML
-   - [] Chrome standard JSON
    - [] Firefox standard HTML
-   - [] Firefox standard JSON
-   - [] Different methods (Stack/RegExp/XML/HTML/Serialize) [serialize: modify model/soup class and add serializer]
-3. bookmarks_parser.py
+3. Bookmarks Parser in Different Methods:
+
+   - [/] Iteration/Stack
+     - [] Regular Expressions
+     - [x] XML
+     - [x] Import HTML (Firefox/Chrome)
+     - [x] Export HTML (Firefox)
+     - [x] Import JSON (Firefox/Chrome/Bookmarkie)
+     - [x] Export JSON (Bookmarkie)
+     - [x] Import DB (Bookmarkie-SQLAlchemy)
+     - [x] Export DB (Bookmarkie-SQLAlchemy)
+   - [/] Recursion
+     - [] Regular Expressions
+     - [x] XML
+     - [x] HTML
+   - [] Serialize
+     - [] BeautifulSoup Object
+     - [] Boomarkie Database Model Object
+     - [] lxml.etree Object
+   - [] See how I can optimize the 2 versions I wrote (HTML Recursion/Iteration-Stack)
+
+4. bookmarks_parser.py
    - [x] how to include chrome "Other Bookmarks"
-   - [] properly format the json to fit the firefox and chrome standard json format
-4. Tweaks (for aesthetics/efficiency/better practice)
+5. Tweaks (for aesthetics/efficiency/better practice)
    - [] add **slots** to the model class to reduce memory usage (check Python Cookbook p.248 / 8.4)
    - [] refactor the edit/delete javascript (one function contains the modal call, then add listener to cancel and confirm, then another fetch function for the final api call (delete/edit))
    - [x] return an ordered list of directories (ordered by path) at /modal_create/ route

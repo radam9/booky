@@ -62,7 +62,7 @@ li > div > a {
   grid-gap: 20px;
 }
 #add_bookmark,
-#add_directory,
+#add_folder,
 #import,
 #export,
 #clear_database {
@@ -73,7 +73,7 @@ li > div > a {
 #add_bookmark {
   grid-column: 1/2;
 }
-#add_directory {
+#add_folder {
   grid-column: 2/3;
 }
 #export {
@@ -195,6 +195,14 @@ li > div > a {
   grid-template-columns: repeat(4, 190px);
   grid-row-gap: 20px;
   grid-column-gap: 10px;
+}
+
+.mymodal-content form {
+  grid-row: 2/3;
+  grid-column: 1/5;
+  display: grid;
+  grid-template-columns: repeat(4, 190px);
+  grid-gap: 20px 10px;
 }
 
 .mymodal-input {

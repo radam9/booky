@@ -18,12 +18,12 @@ for (let i = 0; i < sort.length; i++) {
   });
 }
 
-// event listener for edit, delete, add bookmark, add directory and Clear Data buttons (modal window)
+// event listener for edit, delete, add bookmark, add folder and Clear Data buttons (modal window)
 const modal = document.getElementById("modal");
 const edits = document.querySelectorAll(".edit");
 const deletes = document.querySelectorAll(".delete");
 const add_bookmark = document.getElementById("add_bookmark");
-const add_directory = document.getElementById("add_directory");
+const add_folder = document.getElementById("add_folder");
 const import_file = document.getElementById("import");
 const export_file = document.querySelectorAll("export");
 const clear_data = document.getElementById("clear_database");
@@ -80,7 +80,7 @@ for (let i = 0; i < edits.length; i++) {
             var link = "/bookmarks/" + id + "/modify";
             var bookmark = { title: title, url: url };
           } else {
-            var link = "/directories/" + id + "/modify";
+            var link = "/folders/" + id + "/modify";
             var bookmark = { title: title };
           }
 
@@ -118,10 +118,10 @@ for (let i = 0; i < deletes.length; i++) {
         const del = modal.getElementsByClassName("btn-confirm")[0];
         close.addEventListener("click", removeModal);
         del.addEventListener("click", () => {
-          if (del.id == "Url") {
+          if (del.id == "url") {
             var link = "/bookmarks/" + id + "/delete";
           } else {
-            var link = "/directories/" + id + "/delete";
+            var link = "/folders/" + id + "/delete";
           }
           fetch(link, {
             method: "DELETE",
@@ -144,7 +144,7 @@ for (let i = 0; i < deletes.length; i++) {
 }
 
 add_bookmark.addEventListener("click", () => {
-  fetch("/modal_create/Url")
+  fetch("/modal_create/url")
     .then(handleErrors)
     .then((response) => response.text())
     .then((data) => {
@@ -179,8 +179,8 @@ add_bookmark.addEventListener("click", () => {
       });
     });
 });
-add_directory.addEventListener("click", () => {
-  fetch("/modal_create/Directory")
+add_folder.addEventListener("click", () => {
+  fetch("/modal_create/folder")
     .then(handleErrors)
     .then((response) => response.text())
     .then((data) => {
@@ -198,7 +198,7 @@ add_directory.addEventListener("click", () => {
           .getElementById("dir-list")
           .options[dir_value].getAttribute("data-id");
         let bookmark = { title: title, parent_id: dir };
-        fetch("/directories/create", {
+        fetch("/folders/create", {
           method: "POST",
           credentials: "include",
           body: JSON.stringify(bookmark),

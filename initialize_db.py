@@ -33,24 +33,24 @@ def main(env="test"):
     db.create_all()
 
     # Create database initial data
-    directories = [
-        Directory(name="Entertainment"),
-        Directory(name="Email"),
-        Directory(name="Images"),
-        Directory(name="Programming"),
-        Directory(name="Information"),
+    folders = [
+        Folder(name="Entertainment"),
+        Folder(name="Email"),
+        Folder(name="Images"),
+        Folder(name="Programming"),
+        Folder(name="Information"),
     ]
     urls = [
-        Url(title="Youtube", url="https://www.youtube.com", directory_id=1),
-        Url(title="Veoh", url="https://www.veoh.com/", directory_id=1),
-        Url(title="Gmail", url="https://www.google.com/gmail/about/#", directory_id=2),
-        Url(title="Outlook", url="https://outlook.live.com/owa/", directory_id=2),
-        Url(title="Unsplash", url="https://unsplash.com/", directory_id=3),
-        Url(title="ArtStation", url="https://www.artstation.com/", directory_id=3),
-        Url(title="Python", url="https://www.python.org/", directory_id=4),
-        Url(title="Udacity", url="https://www.udacity.com/", directory_id=4),
-        Url(title="Wikipedia", url="https://www.wikipedia.org/", directory_id=5),
-        Url(title="Encyclopedia", url="https://www.encyclopedia.com/", directory_id=5),
+        Url(title="Youtube", url="https://www.youtube.com", folder_id=1),
+        Url(title="Veoh", url="https://www.veoh.com/", folder_id=1),
+        Url(title="Gmail", url="https://www.google.com/gmail/about/#", folder_id=2),
+        Url(title="Outlook", url="https://outlook.live.com/owa/", folder_id=2),
+        Url(title="Unsplash", url="https://unsplash.com/", folder_id=3),
+        Url(title="ArtStation", url="https://www.artstation.com/", folder_id=3),
+        Url(title="Python", url="https://www.python.org/", folder_id=4),
+        Url(title="Udacity", url="https://www.udacity.com/", folder_id=4),
+        Url(title="Wikipedia", url="https://www.wikipedia.org/", folder_id=5),
+        Url(title="Encyclopedia", url="https://www.encyclopedia.com/", folder_id=5),
     ]
 
     # Commit data to database
