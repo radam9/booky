@@ -210,21 +210,20 @@ class BookmarksParserHTML:
         menu_children = []
         root_children = [bookmarks_menu]
         for child in self.tree:
-            if child.name == "h3":
-                if child.get("personal_toolbar_folder") == "true":
-                    index = len(root_children)
-                    bookmarks_toolbar = self.parse_folder(
-                        child, index, self.bookmarks.get("id")
-                    )
-                    self.add_to_stack((bookmarks_toolbar, child))
-                    root_children.append(bookmarks_toolbar)
-                elif child.get("unfiled.bookmarks.folder") == "true":
-                    index = len(root_children)
-                    other_bookmarks = self.parse_folder(
-                        child, index, self.bookmarks.get("id")
-                    )
-                    self.add_to_stack((other_bookmarks, child))
-                    root_children.append(other_bookmarks)
+            if child.get("personal_toolbar_folder") == "true":
+                index = len(root_children)
+                bookmarks_toolbar = self.parse_folder(
+                    child, index, self.bookmarks.get("id")
+                )
+                self.add_to_stack((bookmarks_toolbar, child))
+                root_children.append(bookmarks_toolbar)
+            elif child.get("unfiled.bookmarks.folder") == "true":
+                index = len(root_children)
+                other_bookmarks = self.parse_folder(
+                    child, index, self.bookmarks.get("id")
+                )
+                self.add_to_stack((other_bookmarks, child))
+                root_children.append(other_bookmarks)
             else:
                 menu_children.append(child)
         if menu_children:
@@ -240,13 +239,10 @@ class BookmarksParserHTML:
         """
         other_children = []
         for child in self.tree.children:
-            if child.name == "h3":
-                if child.get("personal_toolbar_folder") == "true":
-                    bookmarks_bar = self.parse_folder(
-                        child, 0, self.bookmarks.get("id")
-                    )
-                    self.bookmarks["children"].append(bookmarks_bar)
-                    self.add_to_stack((bookmarks_bar, child))
+            if child.get("personal_toolbar_folder") == "true":
+                bookmarks_bar = self.parse_folder(child, 0, self.bookmarks.get("id"))
+                self.bookmarks["children"].append(bookmarks_bar)
+                self.add_to_stack((bookmarks_bar, child))
             else:
                 other_children.append(child)
         if other_children:
@@ -296,14 +292,13 @@ class BookmarksParserHTML:
     def parse_chrome_root_to_db(self, root):
         other_children = []
         for child in self.tree.children:
-            if child.name == "h3":
-                if child.get("personal_toolbar_folder") == "true":
-                    index = len(self.bookmarks) - 1
-                    bookmarks_bar = self.parse_folder(
-                        item=child, index=index, parent_id=root.id
-                    )
-                    self.add_to_stack((bookmarks_bar, child))
-                    self.bookmarks.append(bookmarks_bar)
+            if child.get("personal_toolbar_folder") == "true":
+                index = len(self.bookmarks) - 1
+                bookmarks_bar = self.parse_folder(
+                    item=child, index=index, parent_id=root.id
+                )
+                self.add_to_stack((bookmarks_bar, child))
+                self.bookmarks.append(bookmarks_bar)
             else:
                 other_children.append(child)
         if other_children:

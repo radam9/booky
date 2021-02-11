@@ -28,8 +28,14 @@ def create_app(test_config=None):
     app = Flask(__name__)
     app.config["SECRET_KEY"] = "SuperAwsomeSecretKey"
     app_dir = os.path.dirname(os.path.abspath(__file__))
-    app.config["UPLOAD_FOLDER"] = os.path.join(app_dir, "static/uploads/")
-    app.config["DOWNLOAD_FOLDER"] = os.path.join(app_dir, "static/downloads/")
+    dir_upload = os.path.join(app_dir, "static/uploads/")
+    dir_download = os.path.join(app_dir, "static/downloads/")
+    if not os.path.exists(dir_upload):
+        os.mkdir(dir_upload)
+    if not os.path.exists(dir_download):
+        os.mkdir(dir_download)
+    app.config["UPLOAD_FOLDER"] = dir_upload
+    app.config["DOWNLOAD_FOLDER"] = dir_download
     # Initialize the database
     db = SQLAlchemy()
     setup_db(app)
@@ -417,4 +423,4 @@ def create_app(test_config=None):
 app = create_app()
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()
