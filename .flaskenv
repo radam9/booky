@@ -1,2 +1,0 @@
-FLASK_APP=bookmarkie
-FLASK_ENV=development
