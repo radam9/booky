@@ -1,1 +1,1 @@
-web:gunicorn app:bookmarkie
+web gunicorn bookmarkie:app
